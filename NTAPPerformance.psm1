@@ -1,13 +1,11 @@
 ﻿#NTAPPerformance.psm1
-Function New-PeformanceObject()
-{
+Function New-PeformanceObject(){
     $CustomObject = New-Object -TypeName PSObject -Property @{Name=""; Version=""; }
     $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Data')
     return $CustomObject
 }
 
-Function Start-NTAPPerformance()
-{
+Function Start-NTAPPerformance(){
     <#
         .SYNOPSIS
         Gathers performance data from cDOT storage systems.
@@ -63,8 +61,84 @@ Function Start-NTAPPerformance()
     
 }
 
-Function Stop-NTAPPerformance()
-{
+Function Stop-NTAPPerformance(){
 
 }
+
+Function Get-NcAutosupportPerf(){
+    [CmdletBinding(DefaultParameterSetName="Auto", SupportsShouldProcess=$false, ConfirmImpact='low')]
+    PARAM(
+    [parameter(ParameterSetName="Auto", Mandatory=$True)]
+    [System.IO.FileInfo]$XML
+    ,
+    [System.IO.FileInfo]$XSL
+    ,
+    [System.IO.FileInfo]$DestinationPath =  "C:\scripts\clusterinfo.xml"
+    ,
+    [String[]]$Controllers
+    ,
+    [Parameter(ParameterSetName='Auto', Mandatory=$false, HelpMessage='Credentials for connecting to the system via SPI web interface.')]
+    [Alias('Cred')]
+    [System.Management.Automation.PSCredential]$Credential
+    )
+    if(!$Controllers)
+    {
+        if(!$global:CurrentNcController)
+        {
+            throw "This commandlet must either have a controller specified or be connected to a cluster."
+        }
+        else
+        {
+            $ManagementInterfaces = Get-NcNetInterface -Role node_mgmt
+        }
+    }
+    else
+    {
+        $ManagementInterfaces = Get-NcNetInterface -Role node_mgmt -vserver $Controllers
+    }
+    if(!$ManagementInterfaces)
+    {
+        throw "No Management interfaces were found. Configure the nodes with interfaces that have the role node_mgmt."
+    }
+    $Yesterday = ((get-date).AddDays(-1))
+    $PerformanceASUP = Get-NcAutoSupportHistory -Trigger callhome.performance.data -Destination http | ?{$_.LastModificationTimestampDT -gt $Yesterday}
+
+    $Yesterday = ((get-date).AddDays(-1)).ToString("yyyyMMdd")
+    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+    foreach($ManagementInterface in $ManagementInterfaces)
+    {
+        if($PerformanceASUP.NodeName -contains $ManagementInterface.Vserver)
+        {
+        $url = "https://$($ManagementInterface.Address)/spi/$($ManagementInterface.Vserver)/etc/log/autosupport/"
+        $website = Invoke-WebRequest -UseBasicParsing -Uri "https://$($ManagementInterface.Address)/spi/$($ManagementInterface.Vserver)/etc/log/autosupport/" -Credential $cred
+        $PerfLink = ($website.Links | ?{$_.HREF -match $yesterday -and $_.HREF -match "1\.0\.files"}).HREF
+        $url = $url + $PerfLink + "CLUSTER-INFO.xml"
+        $browser = New-Object System.Net.WebClient
+        $browser.Credentials = $Credential
+        $url
+    
+        #$browser.DownloadFile($url, $DestinationPath)
+        }
+    }
+    [net.servicepointmanager]::ServerCertificateValidationCallback = $null
+    [xml]$zapi = "<perf-archive-get-oldest-timestamp/>"
+    $result = Invoke-NcSystemApi -RequestXML $zapi
+
+    $xslt = New-Object System.Xml.Xsl.XslCompiledTransform
+    $xslt.Load($xsl)
+
+    try
+    {
+        $xslt.Transform($xml,$ouput)
+        if(Test-Path $ouput)
+        {
+            Write-Host -ForegroundColor Green "The Transformation was successful"
+        }
+    }
+    catch
+    {
+    
+    }
+}
+
 
