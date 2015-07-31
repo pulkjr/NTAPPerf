@@ -48,9 +48,13 @@ Function Start-NTAPPerformance(){
         [Alias('ClusterName')]
         [Alias('SystemName')]
         [string[]]$Name
+        ,
+        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 1, HelpMessage = 'This is the path to the directory for the Log files.')]
+        [ValidateNotNullOrEmpty()]
+        [System.IO.DirectoryInfo]$LogPath
     )
     $ModuleVersion = (Get-Module NTAPPerformance).Version
-    Initialize-NTAPLogs -ModuleVersion $ModuleVersion
+    Initialize-NTAPLogs -ModuleVersion $ModuleVersion -logPath $LogPath
 
     if(!$NTAPCustomer)
     {

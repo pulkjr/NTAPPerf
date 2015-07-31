@@ -53,7 +53,7 @@ function Initialize-NTAPLogs()
     [CmdletBinding(DefaultParameterSetName = 'Name')]
     param(
         [Parameter(ParameterSetName = 'Name', Mandatory = $false)]
-        $logPath = "C:\scripts",
+        $logPath,
         [Parameter(ParameterSetName = 'Name', Mandatory = $false)]
         $logName = "NTAPPerformance_Messages_$('{0:yyyyMMdd}' -f ([datetime]::Now)).log",
         [Parameter(ParameterSetName = 'Name', Mandatory = $true)]
@@ -67,6 +67,10 @@ function Initialize-NTAPLogs()
     }
     catch
     {
+        if(!$logPath){
+            $logPath = pwd
+        }
+
         Write-Verbose -Message "The account running this script does not have rights to use the Application log."
         Log-Start -LogPath $logPath -LogName $logName  -ModuleVersion $ModuleVersion
     }

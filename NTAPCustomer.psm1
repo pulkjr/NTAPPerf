@@ -1,23 +1,18 @@
-﻿Function New-NTAPCustomerObject()
-{
+﻿Function New-NTAPCustomerObject(){
     $CustomObject = New-Object -TypeName PSObject -Property @{SendToSupport="";KnowTheProtocol="";PerceivedLatentProtocol="";Cluster=""}
     $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Customer')
-    $CustomObject.Cluster | Add-Member -MemberType NoteProperty -Name Hostname -Value $null
-    $CustomObject.Cluster | Add-Member -MemberType NoteProperty -Name IPAddress -Value $null
-    $CustomObject.Cluster | Add-Member -MemberType NoteProperty -Name Credential -Value $null
-    $CustomObject.Cluster | Add-Member -MemberType NoteProperty -Name Connection -Value $null
+    $CustomObject.Cluster = New-Object -TypeName psobject -Property @{Hostname=$null;IPAddress=$null;Credentials=$null;Connection=$null}
+
     return $CustomObject
 }
 
-function New-NTAPCustomer()
-{
+function New-NTAPCustomer(){
     New-Variable -Name NTAPCustomer -Value (New-NTAPCustomerObject)
     Get-NTAPCustomerInfo -NTAPCustomer $NTAPCustomer
     return $NTAPCustomer
 }
 
-function Get-NTAPCustomerInfo()
-{
+function Get-NTAPCustomerInfo(){
     param(
         $NTAPCustomer
     )
@@ -100,8 +95,7 @@ function Get-NTAPCustomerInfo()
     }
     #endregion
 
-    if($global:CurrentNcController.name)
-    {
+    if($global:CurrentNcController.name){
         #region - Q3
         CLS
         Write-Host -ForegroundColor green "Progress - Initial User Input: [##--------]"
@@ -124,42 +118,45 @@ function Get-NTAPCustomerInfo()
         }
         #endregion
     }
-    if(!$NTAPCustomer.Cluster.Connection)
-    {
+    if(!$NTAPCustomer.Cluster.Connection){
+        $HostnameQuestion = new-object "System.Collections.ObjectModel.Collection``1[[System.Management.Automation.Host.FieldDescription]]"
+
+        $f = New-Object System.Management.Automation.Host.FieldDescription "Hostname"
+        $f.SetparameterType( [String] )
+        $f.HelpMessage  = "Type the hostname of the cluster management port. If it is not known leave blank and use the next prompt for IP address."
+        $f.Label = "&Hostname"
+        $HostnameQuestion.Add($f)
+
+        $CredentialQuestion = new-object "System.Collections.ObjectModel.Collection``1[[System.Management.Automation.Host.FieldDescription]]"
+
+        $f = New-Object System.Management.Automation.Host.FieldDescription "Credentials"
+        $f.SetparameterType( [System.Management.Automation.PSCredential] )
+        $f.HelpMessage  = "Type the credentials for an account with readonly rights to the clusters. This is to pull support and statistical information"
+        $f.Label = "&Credentials"
+        $CredentialQuestion.Add($f)
+
+        $IPQuestion = new-object "System.Collections.ObjectModel.Collection``1[[System.Management.Automation.Host.FieldDescription]]"
+
+        $f = New-Object System.Management.Automation.Host.FieldDescription "IPAddress"
+        $f.SetparameterType( [System.Net.IPAddress] )
+        $f.HelpMessage  = "The IP address of the Cluster management port. If it is not known ensure the previous hostname is used."
+        $f.Label = "&IPAddress"
+        $IPQuestion.Add($f)
         do
         {
-            $fields = new-object "System.Collections.ObjectModel.Collection``1[[System.Management.Automation.Host.FieldDescription]]"
-
-            $f = New-Object System.Management.Automation.Host.FieldDescription "Hostname"
-            $f.SetparameterType( [String] )
-            $f.HelpMessage  = "Type the hostname of the cluster management port. If it is not known leave blank and use the next prompt for IP address."
-            $f.Label = "&Hostname"
-            $fields.Add($f)
-
-            $CredentialQuestion = new-object "System.Collections.ObjectModel.Collection``1[[System.Management.Automation.Host.FieldDescription]]"
-
-            $f = New-Object System.Management.Automation.Host.FieldDescription "Credentials"
-            $f.SetparameterType( [System.Management.Automation.PSCredential] )
-            $f.HelpMessage  = "Type the credentials for an account with readonly rights to the clusters. This is to pull support and statistical information"
-            $f.Label = "&Credentials"
-            $CredentialQuestion.Add($f)
-
-            $IPQuestion = new-object "System.Collections.ObjectModel.Collection``1[[System.Management.Automation.Host.FieldDescription]]"
-
-            $f = New-Object System.Management.Automation.Host.FieldDescription "IPAddress"
-            $f.SetparameterType( [System.Net.IPAddress] )
-            $f.HelpMessage  = "The IP address of the Cluster management port. If it is not known ensure the previous hostname is used."
-            $f.Label = "&IPAddress"
-            $IPQuestion.Add($f)
+            
             CLS
-            if(!$NTAPCustomer.Cluster.Hostname -or !$NTAPCustomer.Cluster.IPAddress -and $NTAPCustomer.Cluster)
+            if((!$NTAPCustomer.Cluster.Hostname -and !$NTAPCustomer.Cluster.IPAddress) -and $ranOnce -eq 1)
             {
                 Write-Host -ForegroundColor red "Please specify an IP Address or a Hostname to continue"
             }
+            $ranOnce = 1
             Write-Host -ForegroundColor green "Progress - Initial User Input Discovery: [#######---]"
-            $Hostname = $Host.UI.Prompt( "NetApp Cluster Information", "Type the cluster information so the script can connect to it and pull support and statistic information.", $fields )
-            if($Hostname)
+            $Hostname = $Host.UI.Prompt( "NetApp Cluster Information", "Type the cluster information so the script can connect to it and pull support and statistic information.", $HostnameQuestion )
+
+            if($Hostname.Hostname)
             {
+                Write-host "Hostname Specified"
                 try
                 {
                     $IPAddress = [System.Net.DNS]::GetHostAddresses($Hostname.Hostname) | select -First 1 -ErrorAction SilentlyContinue
@@ -168,8 +165,6 @@ function Get-NTAPCustomerInfo()
                 {
                     Log-Error -Code 301 -ErrorDesc "Unable to Resolve IP Address for hostname: $($Hostname.Hostname)"
                     $IPAddress = $null
-
-
                 }
                 if($Hostname.Hostname)
                 {
@@ -180,7 +175,8 @@ function Get-NTAPCustomerInfo()
                     $NTAPCustomer.Cluster.IPAddress = $IPAddress
                 }
             }
-            if($IPAddress)
+
+            if(!$NTAPCustomer.Cluster.IPAddress)
             {
                 $IPAddress = $Host.UI.Prompt( "NetApp Cluster Information", "Type the cluster information so the script can connect to it and pull support and statistic information.", $IPQuestion )
                 if(-not (Test-Connection ($IPAddress.IPAddress) -Count 2 -Quiet))
@@ -191,20 +187,20 @@ function Get-NTAPCustomerInfo()
                 else
                 {
                     $NTAPCustomer.Cluster.IPAddress = $($IPAddress.IPAddress)
+                    $NTAPCustomer.Cluster.IPAddress
                 }
             }
 
-            if(-not $NTAPCustomer.Cluster.Credentials)
+            if(!$NTAPCustomer.Cluster.Credentials)
             {
-                $NTAPCustomer.Cluster.Credentials = $Host.UI.Prompt( "NetApp Cluster Information", "Type the cluster information so the script can connect to it and pull support and statistic information.", $CredentialQuestion )
+                $cred = $Host.UI.Prompt( "NetApp Cluster Information", "Type the cluster information so the script can connect to it and pull support and statistic information.", $CredentialQuestion )
+                $NTAPCustomer.Cluster.Credentials = $cred.Credentials
+
             }
         }While(!$NTAPCustomer.Cluster.IPAddress -and !$NTAPCustomer.Cluster.Credentials)
         
 
     }
-    
-    $NTAPCustomer.Cluster.Hostname
-
 
     Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance using USE Model: [#---------]"
 
