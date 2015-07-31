@@ -196,8 +196,15 @@ function Get-NTAPCustomerInfo(){
         }While(!$NTAPCustomer.Cluster.IPAddress -and !$NTAPCustomer.Cluster.Credentials)
         
         if(!$NTAPCustomer.Cluster.Connection){
+            Log-Write -LineValue "No Connection to Cluster Attempting to Connect to: $($NTAPCustomer.Cluster.IPAddress)" -Code 106 -Severity INFORMATIONAL
             if($NTAPCustomer.Cluster.IPAddress){
                 $NTAPCustomer.Cluster.Connection = Connect-NcController ($NTAPCustomer.Cluster.IPAddress) -Credential ($NTAPCustomer.Cluster.Credentials)
+                if($NTAPCustomer.Cluster.Connection.name -eq $NTAPCustomer.Cluster.IPAddress){
+                    Log-Write -LineValue "Connection to cluster $($NTAPCustomer.Cluster.IPAddress) Successful" -Code 107 -Severity INFORMATIONAL
+                }
+            }
+            else{
+                Log-Error -Code 303 -ErrorDesc "IP Adress still not specified. Please run the Start-NTAPPerformance command again." -ExitGracefully
             }
 
         }
