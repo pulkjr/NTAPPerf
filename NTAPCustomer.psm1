@@ -156,7 +156,7 @@ function Get-NTAPCustomerInfo(){
 
             if($Hostname.Hostname)
             {
-                Write-host "Hostname Specified"
+                Write-Verbose "Hostname Specified"
                 try
                 {
                     $IPAddress = [System.Net.DNS]::GetHostAddresses($Hostname.Hostname) | select -First 1 -ErrorAction SilentlyContinue
@@ -176,32 +176,32 @@ function Get-NTAPCustomerInfo(){
                 }
             }
 
-            if(!$NTAPCustomer.Cluster.IPAddress)
-            {
+            if(!$NTAPCustomer.Cluster.IPAddress){
                 $IPAddress = $Host.UI.Prompt( "NetApp Cluster Information", "Type the cluster information so the script can connect to it and pull support and statistic information.", $IPQuestion )
-                if(-not (Test-Connection ($IPAddress.IPAddress) -Count 2 -Quiet))
-                {
+                if(-not (Test-Connection ($IPAddress.IPAddress) -Count 2 -Quiet)){
                     Log-Error -Code 302 -ErrorDesc "Unable to Ping IP Address: $($IPAddress.IPAddress)"
                     $NTAPCustomer.Cluster.IPAddress = $null
                 }
-                else
-                {
+                else{
                     $NTAPCustomer.Cluster.IPAddress = $($IPAddress.IPAddress)
                     $NTAPCustomer.Cluster.IPAddress
                 }
             }
 
-            if(!$NTAPCustomer.Cluster.Credentials)
-            {
+            if(!$NTAPCustomer.Cluster.Credentials){
                 $cred = $Host.UI.Prompt( "NetApp Cluster Information", "Type the cluster information so the script can connect to it and pull support and statistic information.", $CredentialQuestion )
                 $NTAPCustomer.Cluster.Credentials = $cred.Credentials
 
             }
         }While(!$NTAPCustomer.Cluster.IPAddress -and !$NTAPCustomer.Cluster.Credentials)
         
+        if(!$NTAPCustomer.Cluster.Connection){
+            if($NTAPCustomer.Cluster.IPAddress){
+                $NTAPCustomer.Cluster.Connection = Connect-NcController ($NTAPCustomer.Cluster.IPAddress) -Credential ($NTAPCustomer.Cluster.Credentials)
+            }
+
+        }
 
     }
-
-    Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance using USE Model: [#---------]"
 
 }
