@@ -1,0 +1,3 @@
+NTAP Performance Module, version 0.0.1.
+
+To learn more about the Clustered Data ONTAP Performance PowerShell Toolkit, import the NTAPPerformance module and invoke 'Show-NaHelp'.
