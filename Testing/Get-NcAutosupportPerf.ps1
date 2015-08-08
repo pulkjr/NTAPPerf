@@ -1,83 +1,4 @@
-﻿#NTAPPerformance.psm1
-Function New-PeformanceObject(){
-    $CustomObject = New-Object -TypeName PSObject -Property @{Name=""; Version=""; }
-    $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Data')
-    return $CustomObject
-}
-
-Function Start-NTAPPerformance(){
-    <#
-        .SYNOPSIS
-        Gathers performance data from cDOT storage systems.
-        
-        .DESCRIPTION
-        Uses the Data ONTAP PowerShell toolkit to gather performance and configuration about a system. 
-        
-        .PARAMETER Name
-        The system name or IP address of the cluster admin SVM to gather the data from.
-
-        .EXAMPLE
-        PS C:\> Start-NTAPPerformance
-        
-        .LINK
-        https://none
-        
-        .INPUTS
-        [System.String[]] or [NetApp.Ontapi.AbstractController[]]
-        
-        .OUTPUTS
-        []
-        
-        .NOTES
-        AUTHOR : Joseph Pulk
-        REQUIRES
-        : PowerShell 2.0
-        : Data ONTAP PowerShell Toolkit 3.2.1
-        BURTS
-        : 20150719.1 - Collection of data to send to support errors stating missing functionality.
-        REQUESTED FUNCTIONALITY FOR FUTURE RELEASES
-        - Perfstat Collection
-        - CMPG Setup and Collection
-    #>
-    
-    [CmdletBinding(DefaultParameterSetName = 'Name')]
-    [OutputType([System.Management.Automation.PSObject])]
-    param (
-        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 0, ValueFromPipeLine = $true, ValueFromPipelineByPropertyName = $true, HelpMessage = 'The name(s) of the system to gather the data from.')]
-        [ValidateNotNullOrEmpty()]
-        [Alias('ClusterName')]
-        [Alias('SystemName')]
-        [string[]]$Name
-        ,
-        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 1, HelpMessage = 'This is the path to the directory for the Log files.')]
-        [ValidateNotNullOrEmpty()]
-        [System.IO.DirectoryInfo]$LogPath
-    )
-    $ModuleVersion = (Get-Module NTAPPerformance).Version
-    Initialize-NTAPLogs -ModuleVersion $ModuleVersion -logPath $LogPath
-
-    if(!$NTAPCustomer)
-    {
-        Write-Verbose "Missing Customer Data"
-        $NTAPCustomer = New-NTAPCustomer
-    }
-    if(!$NTAPCustomer)
-    {
-        "Shit"
-    }
-    else{
-        $NTAPCustomer
-    }
-    Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance using USE Model: [#---------]"
-    
-}
-
-Function Stop-NTAPPerformance(){
-
-}
-
-Function Get-NcAutosupportPerf(){
-    [CmdletBinding(DefaultParameterSetName="Auto", SupportsShouldProcess=$false, ConfirmImpact='low')]
+﻿    [CmdletBinding(DefaultParameterSetName="Auto", SupportsShouldProcess=$false, ConfirmImpact='low')]
     PARAM(
     [parameter(ParameterSetName="Auto", Mandatory=$True)]
     [System.IO.FileInfo]$XML
@@ -100,6 +21,7 @@ Function Get-NcAutosupportPerf(){
         }
         else
         {
+            Write-Verbose "Pulling Node Management interface."
             $ManagementInterfaces = Get-NcNetInterface -Role node_mgmt
         }
     }
@@ -113,7 +35,21 @@ Function Get-NcAutosupportPerf(){
     }
     $Yesterday = ((get-date).AddDays(-1))
     $PerformanceASUP = Get-NcAutoSupportHistory -Trigger callhome.performance.data -Destination http | ?{$_.LastModificationTimestampDT -gt $Yesterday}
+    if(!$PerformanceASUP){
+        Log-Error -ErrorDesc "No Performance ASUP's were found on the cluster for the specified time period." -Code 304 -Category ObjectNotFound
+        $title = "Missing Performance ASUP"
+        $message = "There is a Missing Performance ASUP. Would you like to generate one?"
 
+        $Yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", `
+            "I would like to invoke a new Autosupport on the system that is missing one."
+
+        $No = New-Object System.Management.Automation.Host.ChoiceDescription "&No", `
+            "No I would like to use the statistics command to pull live stats from the Cluster. This will drastically change the time to run."
+
+        $options = [System.Management.Automation.Host.ChoiceDescription[]]($Yes, $No)
+
+        $NTAPCustomer.KnowTheProtocol = $host.ui.PromptForChoice($title, $message, $options, 0) 
+    }
     $Yesterday = ((get-date).AddDays(-1)).ToString("yyyyMMdd")
     [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
     foreach($ManagementInterface in $ManagementInterfaces)
@@ -150,6 +86,3 @@ Function Get-NcAutosupportPerf(){
     {
     
     }
-}
-
-

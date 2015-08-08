@@ -8,7 +8,7 @@
 
 function New-NTAPCustomer(){
     New-Variable -Name NTAPCustomer -Value (New-NTAPCustomerObject)
-    Get-NTAPCustomerInfo -NTAPCustomer $NTAPCustomer
+    $NTAPCustomer = Get-NTAPCustomerInfo -NTAPCustomer $NTAPCustomer
     return $NTAPCustomer
 }
 
@@ -23,13 +23,13 @@ function Get-NTAPCustomerInfo(){
     Write-Host -ForegroundColor green "Step 1 - Progress - Initial User Input: [#---------]"
 
     $title = "Support"
-    $message = "Are you able to send data to support or is this a secured environment?"
+    $message = "Are you able to send data to support?"
 
     $Yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", `
-        "Yes this is a secured environment and I am can NOT send data to support."
+        "Yes, I can send data to support."
 
     $No = New-Object System.Management.Automation.Host.ChoiceDescription "&No", `
-        "No, I CAN send data to support."
+        "No, this is a secured environment and I am NOT able or authorized to send data to support."
 
     $options = [System.Management.Automation.Host.ChoiceDescription[]]($Yes, $No)
 
@@ -210,5 +210,8 @@ function Get-NTAPCustomerInfo(){
         }
 
     }
+
+    return $NTAPCustomer
+
 
 }

@@ -216,22 +216,18 @@ Function Log-Error{
   )
   
   Process{
-    if($category)
-    {
+    if($category){
         Write-Error -ErrorId $Code -Message $ErrorDesc -Category $category
     }
-    else
-    {
+    else{
         Write-Error -ErrorId $Code -Message $ErrorDesc
     }
     Add-Content -Path $script:LogPath -Value "[$([DateTime]::Now)]: $Code : ERROR`t`t : $ErrorDesc"
 
-    if($script:ErrorCode)
-    {
+    if($script:ErrorCode){
         $script:ErrorCode = $Code
     }
-    else
-    {
+    else{
         New-Variable -Name ErrorCode -Value $code -Scope script
     }
     #If $ExitGracefully = True then run Log-Finish and exit script
