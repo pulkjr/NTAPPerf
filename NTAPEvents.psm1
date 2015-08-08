@@ -40,7 +40,28 @@
         [Alias('SystemName')]
         [string[]]$Name
     )
-    Write-Host "test"
+    function New-NTAPPEventObject{
+        param(
+            $ID,$Name,$Definition,$Command
+        )
+        $NTAPPEventObjectObj = New-Object -TypeName Psobject -Property @{ID=$ID;Name=$Name;Definition=$Definition;Command=$Command}
+
+    }
+    $NTAPPEventObjects = @()
+    #Process Milestones - 000 - 99
+
+    #Informational Alerts - 100 - 199
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 101 -Name UsingRealtimeStats -Definition "User Opted to use realtime Statistics instead of past CM Stats." -Command "Get-NcAutoSupportPerf"
+    #Warnings - 200 -299
+
+    #Errors - 300+
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 301 -Name ResolveHostName -Definition "Unable to Resolve IP Address for hostname"
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 302 -Name InaccessibleIP -Definition "Unable to Ping IP Address"
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 303 -Name IPVariableMissing -Definition "IP Adress still not specified. Please run the Start-NTAPPerformance command again."
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 304 -Name MissingASUP -Definition "No Performance ASUP was found on the cluster for the specified time period." -Command "Get-NcAutoSupportPerf"
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 305 -Name MissingClusterConnection -Definition "The command required a connection to a NetApp cluster." -Command "Get-NcAutoSupportPerf"
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 306 -Name MissingClusterConnection -Definition "No Management interfaces were found. Configure the nodes with interfaces that have the role node_mgmt." -Command "Get-NcAutoSupportPerf"
+
 }
 
 function Register-NTAPEvents()

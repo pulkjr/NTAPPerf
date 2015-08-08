@@ -1,11 +1,14 @@
 ﻿    [CmdletBinding(DefaultParameterSetName="Auto", SupportsShouldProcess=$false, ConfirmImpact='low')]
     PARAM(
-    [parameter(ParameterSetName="Auto", Mandatory=$True)]
+    [parameter(ParameterSetName="Auto", Mandatory=$false)]
     [System.IO.FileInfo]$XML
     ,
     [System.IO.FileInfo]$XSL
     ,
     [System.IO.FileInfo]$DestinationPath =  "C:\scripts\clusterinfo.xml"
+    ,
+    [parameter(ParameterSetName="Auto", Mandatory=$true)]
+    $Environment
     ,
     [String[]]$Controllers
     ,
@@ -17,21 +20,21 @@
     {
         if(!$global:CurrentNcController)
         {
-            throw "This commandlet must either have a controller specified or be connected to a cluster."
+            Log-Error -ErrorDesc "This commandlet must either have a controller specified or be connected to a cluster." -Code 305 -Category ConnectionError -ExitGracefully
         }
         else
         {
             Write-Verbose "Pulling Node Management interface."
-            $ManagementInterfaces = Get-NcNetInterface -Role node_mgmt
+            $ManagementInterfaces = $Environment.NodeManagementInt
         }
     }
     else
     {
-        $ManagementInterfaces = Get-NcNetInterface -Role node_mgmt -vserver $Controllers
+        $ManagementInterfaces = $Environment.NodeManagementInt | ?{$_.vserver -match $Controllers} #Need to test
     }
     if(!$ManagementInterfaces)
     {
-        throw "No Management interfaces were found. Configure the nodes with interfaces that have the role node_mgmt."
+        Log-Error -ErrorDesc "No Management interfaces were found. Configure the nodes with interfaces that have the role node_mgmt." -Code 306 -Category NotImplemented
     }
     $Yesterday = ((get-date).AddDays(-1))
     $PerformanceASUP = Get-NcAutoSupportHistory -Trigger callhome.performance.data -Destination http | ?{$_.LastModificationTimestampDT -gt $Yesterday}
@@ -48,7 +51,14 @@
 
         $options = [System.Management.Automation.Host.ChoiceDescription[]]($Yes, $No)
 
-        $NTAPCustomer.KnowTheProtocol = $host.ui.PromptForChoice($title, $message, $options, 0) 
+        $PerformanceASUPResponse = $host.ui.PromptForChoice($title, $message, $options, 0) 
+        if($PerformanceASUPResponse -eq 0){
+
+        }
+        else{
+            Log-Write -LineValue "User Opted to use realtime Statistics instead of past CM Stats." -Code 101 -Severity INFORMATIONAL
+        }
+
     }
     $Yesterday = ((get-date).AddDays(-1)).ToString("yyyyMMdd")
     [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
