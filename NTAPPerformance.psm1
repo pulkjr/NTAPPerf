@@ -61,14 +61,14 @@ Function Start-NTAPPerformance(){
         Write-Verbose "Missing Customer Data"
         $NTAPCustomer = New-NTAPCustomer
     }
-    if(!$NTAPCustomer)
+    if($NTAPCustomer)
     {
-        "Shit"
+        Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance using USE Model: [#---------]"
     }
     else{
         $NTAPCustomer
     }
-    Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance using USE Model: [#---------]"
+    
     
 }
 
