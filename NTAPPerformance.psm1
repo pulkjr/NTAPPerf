@@ -60,7 +60,7 @@ Function Start-NTAPPerformance(){
                     $instances = Get-NcPerfInstance -Name $ObjName
                     if($instances){
                         foreach($Counter in ($CounterMeta | ?{$_.ObjName -eq $ObjName})){
-                            $CustomObject = New-Object -TypeName PSObject -Property @{Objects=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Values=$()}
+                            $CustomObject = New-Object -TypeName PSObject -Property @{Name=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Values=$()}
                             $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Data')
                             $PerformanceArray += $CustomObject
 
@@ -69,10 +69,18 @@ Function Start-NTAPPerformance(){
                 }
             }
             else{
-                Log-Error -ErrorDesc "Counter Meta File Inaccessible. Please ensure $CounterMetaPath is accessible." -Code 308 -category ObjectNotFound
+                Log-Error -ErrorDesc "Counter Meta File Inaccessible. Please ensure $CounterMetaPath is accessible." -Code 308 -category ObjectNotFound -ExitGracefully
 
             }
             return $PerformanceArray
+        }
+        Function Start-NcPerfPull{
+            param($PerformanceArray)
+
+            foreach($ObjName in ($PerformanceArray | Select -Unique Name)){
+                $Perf = Get-NcPerfData -Name $ObjName.Name -Instance ($PerformanceArray | ?{$_.Name -eq $ObjName.Name}).Instances.name -Counter ($PerformanceArray | ?{$_.Name -eq $ObjName.Name}).Counters 
+            }
+            
         }
     }
     Process{
@@ -87,7 +95,13 @@ Function Start-NTAPPerformance(){
         if($NTAPCustomer)
         {
             Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance using USE Model: [#---------]"
-            $PerformanceObj = New-PeformanceObject
+            $PerformanceArray = New-PeformanceObject
+            if($PerformanceArray){
+
+            }
+            Else{
+                Log-Error -ErrorDesc "The Array of Performance Counters is missing or there are not valid instances." -Code 309 -Category ObjectNotFound -ExitGracefully
+            }
         }
         else{
             Log-Error -ErrorDesc "Customer Object Missing. Please run the Command Again" -Code 307 -Category ObjectNotFound -ExitGracefully

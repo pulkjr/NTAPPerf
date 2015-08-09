@@ -63,7 +63,7 @@
     $NTAPPEventObjects += New-NTAPPEventObject -ID 306 -Name MissingClusterConnection -Definition "No Management interfaces were found. Configure the nodes with interfaces that have the role node_mgmt." -Command "Get-NcAutoSupportPerf"
     $NTAPPEventObjects += New-NTAPPEventObject -ID 307 -Name MissingCustomerObject -Definition "Customer Object Missing. Please run the Command Again" -Command "Start-NTAPPerformance"
     $NTAPPEventObjects += New-NTAPPEventObject -ID 308 -Name MissingPerfMetaFile -Definition "Counter Meta File Inaccessible. Please ensure file is accessible." -Command "Start-NTAPPerformance"
-    
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 309 -Name MissingPerfCouterArray -Definition "The Array of Performance Counters is missing or there are not valid instances."  -Command "Start-NTAPPerformance"
 }
 
 function Register-NTAPEvents()
