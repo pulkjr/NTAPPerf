@@ -25,19 +25,22 @@
         else
         {
             Write-Verbose "Pulling Node Management interface."
-            $ManagementInterfaces = $Environment.NodeManagementInt
+            $ManagementInterface = $Environment.ClusterManagementInt
         }
     }
     else
     {
-        $ManagementInterfaces = $Environment.NodeManagementInt | ?{$_.vserver -match $Controllers} #Need to test
+        $ManagementInterface = $Environment.ClusterManagementInt | ?{$_.vserver -match $Controllers} #Need to test
     }
-    if(!$ManagementInterfaces)
+    if(!$ManagementInterface)
     {
         Log-Error -ErrorDesc "No Management interfaces were found. Configure the nodes with interfaces that have the role node_mgmt." -Code 306 -Category NotImplemented
     }
     $Yesterday = ((get-date).AddDays(-1))
-    $PerformanceASUP = Get-NcAutoSupportHistory -Trigger callhome.performance.data -Destination http | ?{$_.LastModificationTimestampDT -gt $Yesterday}
+    if($environment.AutoSupportConfig | ?{$_.IsPerfDataEnabled -eq $false}){
+        Log-Write -LineValue "AutoSupport Configuration for Performance Collection is disabled. One will need to be triggered or realtime collection used." -Code 201 -Severity WARNING
+    }
+    $PerformanceASUP = Get-NcAutoSupportHistory -Trigger callhome.performance.data -Destination http | ?{$_.LastModificationTimestampDT -gt ('{0:dd/MM/yyyy}' -f $Yesterday)}
     if(!$PerformanceASUP){
         Log-Error -ErrorDesc "No Performance ASUP's were found on the cluster for the specified time period." -Code 304 -Category ObjectNotFound
         $title = "Missing Performance ASUP"
@@ -53,34 +56,35 @@
 
         $PerformanceASUPResponse = $host.ui.PromptForChoice($title, $message, $options, 0) 
         if($PerformanceASUPResponse -eq 0){
-
+            Invoke-NcAutoSupport -Type Performance -Node $environment.Nodes
         }
         else{
             Log-Write -LineValue "User Opted to use realtime Statistics instead of past CM Stats." -Code 101 -Severity INFORMATIONAL
         }
 
     }
+
     $Yesterday = ((get-date).AddDays(-1)).ToString("yyyyMMdd")
     [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
-    foreach($ManagementInterface in $ManagementInterfaces)
+    foreach($Node in $Environment.NodeManagementInt)
     {
-        if($PerformanceASUP.NodeName -contains $ManagementInterface.Vserver)
-        {
-        $url = "https://$($ManagementInterface.Address)/spi/$($ManagementInterface.Vserver)/etc/log/autosupport/"
-        $website = Invoke-WebRequest -UseBasicParsing -Uri "https://$($ManagementInterface.Address)/spi/$($ManagementInterface.Vserver)/etc/log/autosupport/" -Credential $cred
+
+        $url = "https://$($ManagementInterface.Address)/spi/$($Node.Vserver)/etc/log/autosupport/"
+        Write-Verbose "Navigating to: $url"
+        $website = Invoke-WebRequest -UseBasicParsing -Uri "https://$($ManagementInterface.Address)/spi/$($ManagementInterface.CurrentNode)/etc/log/autosupport/" -Credential $Credential
         $PerfLink = ($website.Links | ?{$_.HREF -match $yesterday -and $_.HREF -match "1\.0\.files"}).HREF
         $url = $url + $PerfLink + "CLUSTER-INFO.xml"
         $browser = New-Object System.Net.WebClient
         $browser.Credentials = $Credential
-        $url
+
     
         #$browser.DownloadFile($url, $DestinationPath)
-        }
+
     }
     [net.servicepointmanager]::ServerCertificateValidationCallback = $null
-    [xml]$zapi = "<perf-archive-get-oldest-timestamp/>"
-    $result = Invoke-NcSystemApi -RequestXML $zapi
-
+    #[xml]$zapi = "<perf-archive-get-oldest-timestamp/>"
+    #$result = Invoke-NcSystemApi -RequestXML $zapi
+    break
     $xslt = New-Object System.Xml.Xsl.XslCompiledTransform
     $xslt.Load($xsl)
 

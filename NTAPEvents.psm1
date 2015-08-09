@@ -53,7 +53,7 @@
     #Informational Alerts - 100 - 199
     $NTAPPEventObjects += New-NTAPPEventObject -ID 101 -Name UsingRealtimeStats -Definition "User Opted to use realtime Statistics instead of past CM Stats." -Command "Get-NcAutoSupportPerf"
     #Warnings - 200 -299
-
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 201 -Name AutoSupportPerfDisabled -Definition "AutoSupport Configuration for Performance Collection is disabled." -Command "Get-NcAutoSupportPerf"
     #Errors - 300+
     $NTAPPEventObjects += New-NTAPPEventObject -ID 301 -Name ResolveHostName -Definition "Unable to Resolve IP Address for hostname"
     $NTAPPEventObjects += New-NTAPPEventObject -ID 302 -Name InaccessibleIP -Definition "Unable to Ping IP Address"
@@ -61,7 +61,7 @@
     $NTAPPEventObjects += New-NTAPPEventObject -ID 304 -Name MissingASUP -Definition "No Performance ASUP was found on the cluster for the specified time period." -Command "Get-NcAutoSupportPerf"
     $NTAPPEventObjects += New-NTAPPEventObject -ID 305 -Name MissingClusterConnection -Definition "The command required a connection to a NetApp cluster." -Command "Get-NcAutoSupportPerf"
     $NTAPPEventObjects += New-NTAPPEventObject -ID 306 -Name MissingClusterConnection -Definition "No Management interfaces were found. Configure the nodes with interfaces that have the role node_mgmt." -Command "Get-NcAutoSupportPerf"
-
+    
 }
 
 function Register-NTAPEvents()
