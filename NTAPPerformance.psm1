@@ -1,10 +1,4 @@
 ﻿#NTAPPerformance.psm1
-Function New-PeformanceObject(){
-    $CustomObject = New-Object -TypeName PSObject -Property @{Name=""; Version=""; }
-    $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Data')
-    return $CustomObject
-}
-
 Function Start-NTAPPerformance(){
     <#
         .SYNOPSIS
@@ -52,24 +46,54 @@ Function Start-NTAPPerformance(){
         [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 1, HelpMessage = 'This is the path to the directory for the Log files.')]
         [ValidateNotNullOrEmpty()]
         [System.IO.DirectoryInfo]$LogPath
+        ,
+        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 1, HelpMessage = 'This is the path to the Counter Definition File.')]
+        [ValidateNotNullOrEmpty()]
+        [System.IO.FileInfo]$CounterMetaPath = (Get-Module NTAPPerformance).ModuleBase + "\Resources\CounterMeta.csv"
     )
-    $ModuleVersion = (Get-Module NTAPPerformance).Version
-    Initialize-NTAPLogs -ModuleVersion $ModuleVersion -logPath $LogPath
+    Begin{
+        Function New-PeformanceObject(){
+            $PerformanceArray=@()
+            if(Test-Path -Path $CounterMetaPath){
+                $CounterMeta = Import-Csv -Path $CounterMetaPath
+                foreach($ObjName in  (($CounterMeta | select -Unique ObjName).ObjName)){
+                    $instances = Get-NcPerfInstance -Name $ObjName
+                    if($instances){
+                        foreach($Counter in ($CounterMeta | ?{$_.ObjName -eq $ObjName})){
+                            $CustomObject = New-Object -TypeName PSObject -Property @{Objects=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Values=$()}
+                            $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Data')
+                            $PerformanceArray += $CustomObject
 
-    if(!$NTAPCustomer)
-    {
-        Write-Verbose "Missing Customer Data"
-        $NTAPCustomer = New-NTAPCustomer
+                        }
+                    }
+                }
+            }
+            else{
+                Log-Error -ErrorDesc "Counter Meta File Inaccessible. Please ensure $CounterMetaPath is accessible." -Code 308 -category ObjectNotFound
+
+            }
+            return $PerformanceArray
+        }
     }
-    if($NTAPCustomer)
-    {
-        Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance using USE Model: [#---------]"
-    }
-    else{
-        $NTAPCustomer
-    }
+    Process{
+        $ModuleVersion = (Get-Module NTAPPerformance).Version
+        Initialize-NTAPLogs -ModuleVersion $ModuleVersion -logPath $LogPath
+
+        if(!$NTAPCustomer)
+        {
+            Write-Verbose "Missing Customer Data"
+            $NTAPCustomer = New-PeformanceObject
+        }
+        if($NTAPCustomer)
+        {
+            Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance using USE Model: [#---------]"
+            $PerformanceObj = New-PeformanceObject
+        }
+        else{
+            Log-Error -ErrorDesc "Customer Object Missing. Please run the Command Again" -Code 307 -Category ObjectNotFound -ExitGracefully
+        }
     
-    
+    }
 }
 
 Function Stop-NTAPPerformance(){

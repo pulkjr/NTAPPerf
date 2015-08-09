@@ -61,6 +61,8 @@
     $NTAPPEventObjects += New-NTAPPEventObject -ID 304 -Name MissingASUP -Definition "No Performance ASUP was found on the cluster for the specified time period." -Command "Get-NcAutoSupportPerf"
     $NTAPPEventObjects += New-NTAPPEventObject -ID 305 -Name MissingClusterConnection -Definition "The command required a connection to a NetApp cluster." -Command "Get-NcAutoSupportPerf"
     $NTAPPEventObjects += New-NTAPPEventObject -ID 306 -Name MissingClusterConnection -Definition "No Management interfaces were found. Configure the nodes with interfaces that have the role node_mgmt." -Command "Get-NcAutoSupportPerf"
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 307 -Name MissingCustomerObject -Definition "Customer Object Missing. Please run the Command Again" -Command "Start-NTAPPerformance"
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 308 -Name MissingPerfMetaFile -Definition "Counter Meta File Inaccessible. Please ensure file is accessible." -Command "Start-NTAPPerformance"
     
 }
 
