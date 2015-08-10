@@ -1,12 +1,12 @@
-﻿Function New-NTAPCustomerObject(){
-    $CustomObject = New-Object -TypeName PSObject -Property @{SendToSupport="";KnowTheProtocol="";PerceivedLatentProtocol="";Cluster=""}
-    $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Customer')
-    $CustomObject.Cluster = New-Object -TypeName psobject -Property @{Hostname=$null;IPAddress=$null;Credentials=$null;Connection=$null}
+﻿function New-NTAPCustomer(){
+    Function New-NTAPCustomerObject(){
+        $CustomObject = New-Object -TypeName PSObject -Property @{SendToSupport="";KnowTheProtocol="";PerceivedLatentProtocol="";Cluster=""}
+        $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Customer')
+        $CustomObject.Cluster = New-Object -TypeName psobject -Property @{Hostname=$null;IPAddress=$null;Credentials=$null;Connection=$null}
 
-    return $CustomObject
-}
+        return $CustomObject
+    }
 
-function New-NTAPCustomer(){
     New-Variable -Name NTAPCustomer -Value (New-NTAPCustomerObject)
     $NTAPCustomer = Get-NTAPCustomerInfo -NTAPCustomer $NTAPCustomer
     return $NTAPCustomer

@@ -53,20 +53,17 @@ Function Start-NTAPPerformance(){
     )
     Begin{
         Function New-PeformanceObject(){
+            param($EnvironmentObj)
             $PerformanceArray=@()
-            if(Test-Path -Path $CounterMetaPath){
-                $CounterMeta = Import-Csv -Path $CounterMetaPath
-                foreach($ObjName in  (($CounterMeta | select -Unique ObjName).ObjName)){
-                    $instances = Get-NcPerfInstance -Name $ObjName
-                    if($instances){
-                        foreach($Counter in ($CounterMeta | ?{$_.ObjName -eq $ObjName})){
-                            $CustomObject = New-Object -TypeName PSObject -Property @{Name=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Values=$()}
-                            $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Data')
-                            $PerformanceArray += $CustomObject
-
-                        }
+                foreach($instance in ($EnvironmentObj.performance.instances | sort -Unique Uuid)){
+                    $instanceObj = New-Object -TypeName psobject -Property @{Instance=$instance.name;uuid=$instance.uuid;PerfObjects=@()}
+                    foreach($ObjName in ($EnvironmentObj.performance | ?{$_.instances.uuid -eq $instanceObj.uuid}))
+                    {
+                        $instanceObj.PerfObjects = New-Object -TypeName psobject -Property @{Name=$ObjName.Name;Counters=@()}
                     }
+                    $PerformanceArray += $instanceObj
                 }
+            
             }
             else{
                 Log-Error -ErrorDesc "Counter Meta File Inaccessible. Please ensure $CounterMetaPath is accessible." -Code 308 -category ObjectNotFound -ExitGracefully
@@ -74,11 +71,50 @@ Function Start-NTAPPerformance(){
             }
             return $PerformanceArray
         }
+        Function New-EnvironmentObject(){
+            $EnvironmentObj = New-Object -TypeName PSObject -Property @{Name=$null; Version=$null; Nodes=@();NodeManagementInt=@();AutoSupportConfig=@();ClusterManagementInt=@();Performance=@() }
+            $EnvironmentObj.PsObject.TypeNames.Add('NetApp.Performance.Environment')
+            return $EnvironmentObj
+        }
+
+        Function Get-NTAPEnvironment{
+            $EnvironmentObj = New-EnvironmentObject
+            $EnvironmentObj.Name = (Get-NcCluster).ClusterName
+            $EnvironmentObj.Version = (Get-NcSystemImage | ?{$_.IsCurrent -eq $true} | sort Version | select -first 1).version
+            $EnvironmentObj.Nodes = Get-NcNode
+            $EnvironmentObj.NodeManagementInt = Get-NcNetInterface -Role node_mgmt
+            $EnvironmentObj.AutoSupportConfig = Get-NcAutoSupportConfig
+            $EnvironmentObj.ClusterManagementInt = Get-NcNetInterface -Role cluster_mgmt
+            if(Test-Path -Path $CounterMetaPath){
+                $CounterMeta = Import-Csv -Path $CounterMetaPath
+                foreach($ObjName in  (($CounterMeta | select -Unique ObjName).ObjName)){
+                    $instances = Get-NcPerfInstance -Name $ObjName
+                    if($instances){
+                        foreach($Counter in ($CounterMeta | ?{$_.ObjName -eq $ObjName})){
+                            $CustomObject = New-Object -TypeName PSObject -Property @{Name=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Values=$()}
+                            $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Environment.Counters')
+                            $EnvironmentObj.Performance += $CustomObject
+
+                        }
+                    }
+                }
+            }
+
+            return $EnvironmentObj
+        }
+
         Function Start-NcPerfPull{
             param($PerformanceArray)
 
-            foreach($ObjName in ($PerformanceArray | Select -Unique Name)){
-                $Perf = Get-NcPerfData -Name $ObjName.Name -Instance ($PerformanceArray | ?{$_.Name -eq $ObjName.Name}).Instances.name -Counter ($PerformanceArray | ?{$_.Name -eq $ObjName.Name}).Counters 
+            foreach($ObjName in ($PerformanceArray | Select -Unique Name -first 1)){
+                $PerformanceValues = Get-NcPerfData -Name $ObjName.Name -Instance ($PerformanceArray | ?{$_.Name -eq $ObjName.Name} |select -first 1).Instances.name -Counter ($PerformanceArray | ?{$_.Name -eq $ObjName.Name}).Counters 
+                foreach($performanceValue in $PerformanceValues){
+
+                    foreach($counter in ($PerformanceValue.Counters)){
+                        ($PerformanceArray | ?{$_.Name -eq $ObjName.Name -and $_.Instances.Name -eq $performanceValue.Name -and $_.counters -eq $counter.name}).values += $counter.value
+
+                    }
+                }
             }
             
         }
