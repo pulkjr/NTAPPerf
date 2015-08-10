@@ -55,20 +55,15 @@ Function Start-NTAPPerformance(){
         Function New-PeformanceObject(){
             param($EnvironmentObj)
             $PerformanceArray=@()
-                foreach($instance in ($EnvironmentObj.performance.instances | sort -Unique Uuid)){
-                    $instanceObj = New-Object -TypeName psobject -Property @{Instance=$instance.name;uuid=$instance.uuid;PerfObjects=@()}
-                    foreach($ObjName in ($EnvironmentObj.performance | ?{$_.instances.uuid -eq $instanceObj.uuid}))
-                    {
-                        $instanceObj.PerfObjects = New-Object -TypeName psobject -Property @{Name=$ObjName.Name;Counters=@()}
-                    }
-                    $PerformanceArray += $instanceObj
+            foreach($instance in ($EnvironmentObj.performance.instances | sort -Unique Uuid)){
+                $instanceObj = New-Object -TypeName psobject -Property @{Instance=$instance.name;uuid=$instance.uuid;PerfObjects=@()}
+                foreach($ObjName in ($EnvironmentObj.performance | ?{$_.instances.uuid -eq $instanceObj.uuid}))
+                {
+                    $instanceObj.PerfObjects = New-Object -TypeName psobject -Property @{Name=$ObjName.Name;Counters=@()}
                 }
+                $PerformanceArray += $instanceObj
+            }
             
-            }
-            else{
-                Log-Error -ErrorDesc "Counter Meta File Inaccessible. Please ensure $CounterMetaPath is accessible." -Code 308 -category ObjectNotFound -ExitGracefully
-
-            }
             return $PerformanceArray
         }
         Function New-EnvironmentObject(){
@@ -99,21 +94,23 @@ Function Start-NTAPPerformance(){
                     }
                 }
             }
+            else{
+                Log-Error -ErrorDesc "Counter Meta File Inaccessible. Please ensure $CounterMetaPath is accessible." -Code 308 -category ObjectNotFound -ExitGracefully
+
+            }
 
             return $EnvironmentObj
         }
 
         Function Start-NcPerfPull{
-            param($PerformanceArray)
+            param($EnvironmentObj,$PerformanceArray)
 
-            foreach($ObjName in ($PerformanceArray | Select -Unique Name -first 1)){
-                $PerformanceValues = Get-NcPerfData -Name $ObjName.Name -Instance ($PerformanceArray | ?{$_.Name -eq $ObjName.Name} |select -first 1).Instances.name -Counter ($PerformanceArray | ?{$_.Name -eq $ObjName.Name}).Counters 
+            foreach($ObjName in ($EnvironmentObj.Performance | Select -Unique Name)){
+                $PerformanceValues = Get-NcPerfData -Name $ObjName.Name -Instance ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name} |select -first 1).Instances.name -Counter ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name}).Counters 
                 foreach($performanceValue in $PerformanceValues){
+                    
+                    ($PerformanceArray | ?{$_.uuid -eq $performanceValue.uuid}).PerfObjects.Counters += $performanceValue.Counters
 
-                    foreach($counter in ($PerformanceValue.Counters)){
-                        ($PerformanceArray | ?{$_.Name -eq $ObjName.Name -and $_.Instances.Name -eq $performanceValue.Name -and $_.counters -eq $counter.name}).values += $counter.value
-
-                    }
                 }
             }
             
