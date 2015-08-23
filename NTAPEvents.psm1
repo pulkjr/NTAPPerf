@@ -289,7 +289,7 @@ Function Log-Finish{
 
     If(!($NoExit) -or ($NoExit -eq $False)){
 
-      Exit
+      Throw "Command Completed"
 
     }    
 
