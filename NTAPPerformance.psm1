@@ -73,6 +73,7 @@ Function Start-NTAPPerformance(){
         }
 
         Function Get-NTAPEnvironment{
+            PARAM($NTAPCustomer)
             $EnvironmentObj = New-EnvironmentObject
             $EnvironmentObj.Name = (Get-NcCluster).ClusterName
             $EnvironmentObj.Version = (Get-NcSystemImage | ?{$_.IsCurrent -eq $true} | sort Version | select -first 1).version
@@ -81,12 +82,13 @@ Function Start-NTAPPerformance(){
             $EnvironmentObj.AutoSupportConfig = Get-NcAutoSupportConfig
             $EnvironmentObj.ClusterManagementInt = Get-NcNetInterface -Role cluster_mgmt
             if(Test-Path -Path $CounterMetaPath){
-                $CounterMeta = Import-Csv -Path $CounterMetaPath
+                Write-debug "$NTAPCustomer.PerceivedLatentProtocol = $($NTAPCustomer.PerceivedLatentProtocol)"
+                $CounterMeta = Import-Csv -Path $CounterMetaPath | ?{([convert]::ToInt32($_.type,2)) -band $NTAPCustomer.PerceivedLatentProtocol}
                 foreach($ObjName in  (($CounterMeta | select -Unique ObjName).ObjName)){
                     $instances = Get-NcPerfInstance -Name $ObjName
                     if($instances){
                         foreach($Counter in ($CounterMeta | ?{$_.ObjName -eq $ObjName})){
-                            $CustomObject = New-Object -TypeName PSObject -Property @{Name=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Values=$()}
+                            $CustomObject = New-Object -TypeName PSObject -Property @{Name=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Values=$();PerfType=([convert]::ToString($Counter.Type,2))}
                             $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Environment.Counters')
                             $EnvironmentObj.Performance += $CustomObject
 
@@ -103,9 +105,11 @@ Function Start-NTAPPerformance(){
         }
 
         Function Start-NcPerfPull{
-            param($EnvironmentObj,$PerformanceArray)
-
-            foreach($ObjName in ($EnvironmentObj.Performance | Select -Unique Name)){
+            param($NTAPCustomer,$EnvironmentObj,$PerformanceArray)
+            
+            
+            foreach($ObjName in ($EnvironmentObj.Performance | ?{$_.PerfType -band $PerformanceFilter} | Select -Unique Name)){
+                Write-Host -ForegroundColor Magenta "Perftype: $($ObjName.PerfType)"
                 $PerformanceValues = Get-NcPerfData -Name $ObjName.Name -Instance ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name} |select -first 1).Instances.name -Counter ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name}).Counters 
                 foreach($performanceValue in $PerformanceValues){
                     
@@ -113,7 +117,7 @@ Function Start-NTAPPerformance(){
 
                 }
             }
-            
+            Return $PerformanceArray
         }
         Function Get-NcAutosupportPerf(){
             [CmdletBinding(DefaultParameterSetName="Auto", SupportsShouldProcess=$false, ConfirmImpact='low')]
@@ -255,6 +259,8 @@ Function Start-NTAPPerformance(){
             {
                 $title = "Protocol"
                 $message = "What protocol are you experiencing latency?"
+                $Unknown = New-Object System.Management.Automation.Host.ChoiceDescription "&Unknown", `
+                    "The Protocol is unknown or not in this list. Check Everything."
 
                 $CIFS = New-Object System.Management.Automation.Host.ChoiceDescription "&CIFS", `
                     "A NAS connection via SMB is experiencing latency. (e.g. User Shares, Hyper-V Datastore...)."
@@ -271,18 +277,23 @@ Function Start-NTAPPerformance(){
                 $FCoE = New-Object System.Management.Automation.Host.ChoiceDescription "FCo&E", `
                     "A SAN connection via FCoE is experiencing latency (e.g. LUN, Physical Server, Virtual Server ...)"
     
-                $options = [System.Management.Automation.Host.ChoiceDescription[]]($CIFS, $NFS, $iSCSI, $FCP, $FCoE)
+                $options = [System.Management.Automation.Host.ChoiceDescription[]]($Unknown, $CIFS, $NFS, $iSCSI, $FCP, $FCoE)
 
                 $response = $host.ui.PromptForChoice($title, $message, $options, [int[]](0)) 
-
-                switch ($response)
-                    {
-                        0 {$NTAPCustomer.PerceivedLatentProtocol = "cifs"}
-                        1 {$NTAPCustomer.PerceivedLatentProtocol = "nfs"}
-                        2 {$NTAPCustomer.PerceivedLatentProtocol = "iscsi"}
-                        3 {$NTAPCustomer.PerceivedLatentProtocol = "fcp"}
-                        4 {$NTAPCustomer.PerceivedLatentProtocol = "fcoe"}
-                    }
+                if($response){
+                        #54321
+                        #1 = CIFS
+                        #2 = NFS
+                        #3 = iSCSI
+                        #4 = FCP
+                        #5 = FCoE
+                        $PerformanceFilter = 0
+                        foreach($num in ($response -split " ") | sort -Unique){
+                            $PerformanceFilter += $num -as [int32]
+                        }
+                        $NTAPCustomer.PerceivedLatentProtocol = $PerformanceFilter
+          
+                }
             }
             #endregion
 
@@ -420,9 +431,10 @@ Function Start-NTAPPerformance(){
         if($NTAPCustomer)
         {
             Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance using USE Model: [#---------]"
-            $PerformanceArray = New-PeformanceObject
+            $EnvironmentObj = Get-NTAPEnvironment -NTAPCustomer $NTAPCustomer
+            $PerformanceArray = New-PeformanceObject -EnvironmentObj $EnvironmentObj
             if($PerformanceArray){
-
+                Start-NcPerfPull -NTAPCustomer $NTAPCustomer -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray
             }
             Else{
                 Log-Error -ErrorDesc "The Array of Performance Counters is missing or there are not valid instances." -Code 309 -Category ObjectNotFound -ExitGracefully

@@ -52,6 +52,7 @@
 
     #Informational Alerts - 100 - 199
     $NTAPPEventObjects += New-NTAPPEventObject -ID 101 -Name UsingRealtimeStats -Definition "User Opted to use realtime Statistics instead of past CM Stats." -Command "Get-NcAutoSupportPerf"
+    $NTAPPEventObjects += New-NTAPPEventObject -ID 106 -Name ConnectingtoCluster -Definition "No Connection to Cluster Present, Attempting to Connect to cluster" -Command "Get-NTAPCustomerInfo"
     #Warnings - 200 -299
     $NTAPPEventObjects += New-NTAPPEventObject -ID 201 -Name AutoSupportPerfDisabled -Definition "AutoSupport Configuration for Performance Collection is disabled." -Command "Get-NcAutoSupportPerf"
     #Errors - 300+
