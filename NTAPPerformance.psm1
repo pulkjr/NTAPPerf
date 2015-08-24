@@ -88,7 +88,7 @@ Function Start-NTAPPerformance(){
                     $instances = Get-NcPerfInstance -Name $ObjName
                     if($instances){
                         foreach($Counter in ($CounterMeta | ?{$_.ObjName -eq $ObjName})){
-                            $CustomObject = New-Object -TypeName PSObject -Property @{Name=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Values=$();PerfType=([convert]::ToString($Counter.Type,2))}
+                            $CustomObject = New-Object -TypeName PSObject -Property @{Name=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Values=$();}
                             $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Environment.Counters')
                             $EnvironmentObj.Performance += $CustomObject
 
@@ -105,18 +105,21 @@ Function Start-NTAPPerformance(){
         }
 
         Function Start-NcPerfPull{
-            param($NTAPCustomer,$EnvironmentObj,$PerformanceArray)
+            param($EnvironmentObj,$PerformanceArray,$count=4,$wait=10)
             
-            
-            foreach($ObjName in ($EnvironmentObj.Performance | ?{$_.PerfType -band $PerformanceFilter} | Select -Unique Name)){
-                Write-Host -ForegroundColor Magenta "Perftype: $($ObjName.PerfType)"
-                $PerformanceValues = Get-NcPerfData -Name $ObjName.Name -Instance ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name} |select -first 1).Instances.name -Counter ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name}).Counters 
-                foreach($performanceValue in $PerformanceValues){
+            for($currentCount=1;$currentcount -le $count;$currentCount++){
+                foreach($ObjName in ($EnvironmentObj.Performance | Select -Unique Name)){
+                    $PerformanceValues = Get-NcPerfData -Name $ObjName.Name -Instance ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name} |select -first 1).Instances.name -Counter ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name}).Counters 
+                    foreach($performanceValue in $PerformanceValues){
                     
-                    ($PerformanceArray | ?{$_.uuid -eq $performanceValue.uuid}).PerfObjects.Counters += $performanceValue.Counters
+                        ($PerformanceArray | ?{$_.uuid -eq $performanceValue.uuid}).PerfObjects.Counters += $performanceValue.Counters
 
+                    }
                 }
+                Write-Host -ForegroundColor Green "Pull $currentCount Completed : Sleeping for $wait Seconds"
+                sleep -Seconds $wait
             }
+
             Return $PerformanceArray
         }
         Function Get-NcAutosupportPerf(){
@@ -434,7 +437,7 @@ Function Start-NTAPPerformance(){
             $EnvironmentObj = Get-NTAPEnvironment -NTAPCustomer $NTAPCustomer
             $PerformanceArray = New-PeformanceObject -EnvironmentObj $EnvironmentObj
             if($PerformanceArray){
-                Start-NcPerfPull -NTAPCustomer $NTAPCustomer -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray
+                Start-NcPerfPull -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray
             }
             Else{
                 Log-Error -ErrorDesc "The Array of Performance Counters is missing or there are not valid instances." -Code 309 -Category ObjectNotFound -ExitGracefully
