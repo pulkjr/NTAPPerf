@@ -43,6 +43,10 @@ Function Start-NTAPPerformance(){
         [Alias('SystemName')]
         [string[]]$Name
         ,
+        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 1, HelpMessage = 'This is the path to the output xml.')]
+        [ValidateNotNullOrEmpty()]
+        [System.IO.DirectoryInfo]$OutputPath
+        ,
         [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 1, HelpMessage = 'This is the path to the directory for the Log files.')]
         [ValidateNotNullOrEmpty()]
         [System.IO.DirectoryInfo]$LogPath
@@ -420,6 +424,136 @@ Function Start-NTAPPerformance(){
 
 
         }
+        Function Process-NTAPPerfData(){
+            PARAM($EnvironmentObj,$PerformanceArray)
+
+        }
+        Function Output-NTAPStats{
+            [CmdletBinding(DefaultParameterSetName = 'Name')]
+            PARAM($EnvironmentObj,$PerformanceArray,$OutputPath)
+            function Get-StandardDeviation {            
+                [CmdletBinding()]            
+                param (            
+                  [double[]]$numbers            
+                )            
+               $SDObj = New-Object -TypeName PSobject -Property @{Count=$null;Mean=$null;SD=$null;SD_Max=$null;SD_Min=$null}
+                $avg = $numbers | Measure-Object -Average | select Count, Average            
+                $SDObj.Count = $avg.count
+                $SDObj.Mean = $avg.Average 
+                $popdev = 0            
+            
+                foreach ($number in $numbers){            
+                  $popdev += [math]::pow(($number - $SDObj.Mean), 2)            
+                }            
+    
+                $SDObj.SD  = [System.Math]::Round([math]::sqrt($popdev / ($SDObj.Count-1)),2)
+                $SDObj.SD_Min = [System.Math]::Round($SDObj.Mean - $SDObj.SD ,2)
+                $SDObj.SD_Max = [System.Math]::Round($SDObj.Mean - $SDObj.SD ,2)
+                Return $SDObj           
+            }
+            $DefaultLocation = [environment]::getfolderpath("MyDocuments")
+            # The location of the Performance Ouput XML
+            if(!$OutputPath){
+                $OutPath = "$DefaultLocation\Performance1.xml"
+            }else{
+                $OutPath = ($OutputPath.FullName) + "\Performance" +  ('{0:yyyyMMdd}' -f  (get-date)) + ".xml"
+            }
+
+            # XMLTextWriter to create the XML
+            $XmlWriter = New-Object System.XMl.XmlTextWriter($OutPath,$Null)
+
+            # Adjust formating
+            $xmlWriter.Formatting = 'Indented'
+            $xmlWriter.Indentation = 1
+            $XmlWriter.IndentChar = "`t"
+            #Start the Document
+            $xmlWriter.WriteStartDocument()
+
+            # Set XSL statements
+            $xmlWriter.WriteProcessingInstruction("xml-stylesheet", "type='text/xsl' href='NTAPPerfStyle.xsl'")
+
+            # Create root element "Perf" and add initial attributes
+            $XmlWriter.WriteComment('Performance Analysis from NTAP Performance Module')
+            $xmlWriter.WriteStartElement('Perf')
+            $XmlWriter.WriteAttributeString('ClusterVersion', $EnvironmentObj.Version)
+            $XmlWriter.WriteAttributeString('Name', $EnvironmentObj.Name)
+            # add a couple of random entries
+            foreach($Category in $PerformanceArray.PerfObjects.name | sort -Unique){
+                 $guid = [System.GUID]::NewGuid().ToString()
+
+                 # Open a "Category", Node per Performance Category or NetApp Object
+                 $XmlWriter.WriteComment("Starting Category: $Category")
+                 $xmlWriter.WriteStartElement('Category')
+                 $XmlWriter.WriteAttributeString('Name', $Category)
+                 foreach($Instance in ($PerformanceArray | ?{$_.PerfObjects.name -eq $Category})){
+                     $xmlWriter.WriteStartElement('Instance')
+                     $XmlWriter.WriteAttributeString('Name', $Instance.Instance)
+                     $XmlWriter.WriteAttributeString('uuid', $Instance.uuid)
+
+                     $XmlWriter.WriteStartElement('Utilization')
+                     foreach($counter in $EnvironmentObj.Performance | ?{$_.Name -eq $Category -and $_.USE -eq "utilization"}){
+                        Write-host -ForegroundColor Magenta $counter.Name
+                        $values = ($Instance.PerfObjects.counters | ?{$_.name -eq $counter.Counters}).value
+                        if($values){
+                            $sd = Get-StandardDeviation -numbers $values
+                            $XmlWriter.WriteStartElement('Counter')
+                            $XmlWriter.WriteAttributeString('Name', $counter.Counters)
+                            $XmlWriter.WriteAttributeString('Count', $sd.count)
+                            $XmlWriter.WriteAttributeString('Mean_Value', $sd.mean)
+                            $XmlWriter.WriteAttributeString('Max', $sd.SD_Max)
+                            $XmlWriter.WriteAttributeString('Min', $sd.SD_Min)
+                            $XmlWriter.WriteAttributeString('SD', $sd.SD)
+                            $xmlWriter.WriteEndElement()
+                        }
+                     }
+                     $xmlWriter.WriteEndElement()
+
+                     $XmlWriter.WriteStartElement('Saturation')
+                     foreach($counter in $EnvironmentObj.Performance | ?{$_.Name -eq $Category -and $_.USE -eq "Saturation"}){
+                        $values = ($Instance.PerfObjects.counters | ?{$_.name -eq $counter.Counters}).value
+                        if($values){
+                            $sd = Get-StandardDeviation -numbers $values
+                            $XmlWriter.WriteStartElement('Counter')
+                            $XmlWriter.WriteAttributeString('Name', $counter.Counters)
+                            $XmlWriter.WriteAttributeString('Count', $sd.count)
+                            $XmlWriter.WriteAttributeString('Mean_Value', $sd.mean)
+                            $XmlWriter.WriteAttributeString('Max', $sd.SD_Max)
+                            $XmlWriter.WriteAttributeString('Min', $sd.SD_Min)
+                            $XmlWriter.WriteAttributeString('SD', $sd.SD)
+                            $xmlWriter.WriteEndElement()
+                        }
+                     }
+                     $xmlWriter.WriteEndElement()
+
+                     $XmlWriter.WriteStartElement('Error')
+                     foreach($counter in $EnvironmentObj.Performance | ?{$_.Name -eq $Category -and $_.USE -eq "Error"}){
+                        $values = ($Instance.PerfObjects.counters | ?{$_.name -eq $counter.Counters}).value
+                        if($values){
+                            $XmlWriter.WriteStartElement('Counter')
+                            $XmlWriter.WriteAttributeString('Name', $counter.Counters)
+                            $XmlWriter.WriteAttributeString('Count', $sd.count)
+                            $XmlWriter.WriteAttributeString('Mean_Value', $sd.mean)
+                            $XmlWriter.WriteAttributeString('Max', $sd.SD_Max)
+                            $XmlWriter.WriteAttributeString('Min', $sd.SD_Min)
+                            $XmlWriter.WriteAttributeString('SD', $sd.SD)
+                            $xmlWriter.WriteEndElement()
+                        }
+                     }
+                     $xmlWriter.WriteEndElement()
+
+                     # Close the "Instance" node
+                    $xmlWriter.WriteEndElement()
+                 }
+                  # Close the "Category" node
+                 $xmlWriter.WriteEndElement()
+            }
+            # Close the "perf" node
+            $xmlWriter.WriteEndElement()
+            # Finalize the document
+            $xmlWriter.WriteEndDocument()
+            $xmlWriter.Flush()
+            $xmlWriter.Close()
+        }
     }
     Process{
         $ModuleVersion = (Get-Module NTAPPerformance).Version
@@ -437,10 +571,16 @@ Function Start-NTAPPerformance(){
             $EnvironmentObj = Get-NTAPEnvironment -NTAPCustomer $NTAPCustomer
             $PerformanceArray = New-PeformanceObject -EnvironmentObj $EnvironmentObj
             if($PerformanceArray){
-                Start-NcPerfPull -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray
+               $PerformanceArray = Start-NcPerfPull -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray
             }
             Else{
                 Log-Error -ErrorDesc "The Array of Performance Counters is missing or there are not valid instances." -Code 309 -Category ObjectNotFound -ExitGracefully
+            }
+            if($OutputPath){
+                Output-NTAPStats -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray -OutputPath $OutputPath
+            }
+            else{
+                Output-NTAPStats -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray
             }
         }
         else{
