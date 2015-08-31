@@ -6,8 +6,6 @@ This file has the following sections:
 - Future Plans
 - System Requirements
 - PowerShell Execution Policy
-- Install Guide
-- Uninstall Guide
 - Additional Information
 
 ## Overview ##
@@ -31,12 +29,6 @@ Still figuring this out. Need to get a working draft completed to ensure that it
 The PowerShell execution policy must be set to anything other than the default setting of 'Restricted', as this setting does not allow scripts to run. The files within this module are digitally signed and will run whether the policy is set to 'Unrestricted', 'RemoteSigned' or 'AllSigned'. To do this, right click on PowerShell and select 'Run as Administrator'. Then:
 
   `PS C:> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned`
-
-## Install Guide ##
-Coming Soon
-
-## Uninstall Guide ##
-Coming Soon
 
 ## Additional Information ##
 Please review the WIKI pages for a more indepth information.
