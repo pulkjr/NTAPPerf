@@ -39,4 +39,4 @@ Coming Soon
 Coming Soon
 
 ## Additional Information ##
-None at this time
+Please review the WIKI pages for a more indepth information.
