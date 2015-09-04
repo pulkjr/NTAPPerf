@@ -92,7 +92,7 @@ Function Start-NTAPPerformance(){
                     $instances = Get-NcPerfInstance -Name $ObjName
                     if($instances){
                         foreach($Counter in ($CounterMeta | ?{$_.ObjName -eq $ObjName})){
-                            $CustomObject = New-Object -TypeName PSObject -Property @{Name=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Values=$();}
+                            $CustomObject = New-Object -TypeName PSObject -Property @{Name=$ObjName; Instances=$instances; Counters=$Counter.name;USE=$Counter.USE;Description=$Counter.Desc;Unit=$Counter.Unit;}
                             $CustomObject.PsObject.TypeNames.Add('NetApp.Performance.Environment.Counters')
                             $EnvironmentObj.Performance += $CustomObject
 
@@ -448,13 +448,13 @@ Function Start-NTAPPerformance(){
     
                 $SDObj.SD  = [System.Math]::Round([math]::sqrt($popdev / ($SDObj.Count-1)),2)
                 $SDObj.SD_Min = [System.Math]::Round($SDObj.Mean - $SDObj.SD ,2)
-                $SDObj.SD_Max = [System.Math]::Round($SDObj.Mean - $SDObj.SD ,2)
+                $SDObj.SD_Max = [System.Math]::Round($SDObj.Mean + $SDObj.SD ,2)
                 Return $SDObj           
             }
             $DefaultLocation = [environment]::getfolderpath("MyDocuments")
             # The location of the Performance Ouput XML
             if(!$OutputPath){
-                $OutPath = "$DefaultLocation\Performance1.xml"
+                $OutPath = "$DefaultLocation\Performance1" +  ('{0:yyyyMMdd}' -f  (get-date)) + ".xml"
             }else{
                 $OutPath = ($OutputPath.FullName) + "\Performance" +  ('{0:yyyyMMdd}' -f  (get-date)) + ".xml"
             }
@@ -470,7 +470,7 @@ Function Start-NTAPPerformance(){
             $xmlWriter.WriteStartDocument()
 
             # Set XSL statements
-            $xmlWriter.WriteProcessingInstruction("xml-stylesheet", "type='text/xsl' href='NTAPPerfStyle.xsl'")
+            $xmlWriter.WriteProcessingInstruction("xml-stylesheet", "type='text/xsl' href='NTAPPerf_transform.xsl'")
 
             # Create root element "Perf" and add initial attributes
             $XmlWriter.WriteComment('Performance Analysis from NTAP Performance Module')
@@ -503,6 +503,8 @@ Function Start-NTAPPerformance(){
                             $XmlWriter.WriteAttributeString('Max', $sd.SD_Max)
                             $XmlWriter.WriteAttributeString('Min', $sd.SD_Min)
                             $XmlWriter.WriteAttributeString('SD', $sd.SD)
+                            $XmlWriter.WriteAttributeString('Desc', $counter.Description)
+                            $XmlWriter.WriteAttributeString('unit', $counter.unit)
                             $xmlWriter.WriteEndElement()
                         }
                      }
@@ -520,6 +522,8 @@ Function Start-NTAPPerformance(){
                             $XmlWriter.WriteAttributeString('Max', $sd.SD_Max)
                             $XmlWriter.WriteAttributeString('Min', $sd.SD_Min)
                             $XmlWriter.WriteAttributeString('SD', $sd.SD)
+                            $XmlWriter.WriteAttributeString('Desc', $counter.Description)
+                            $XmlWriter.WriteAttributeString('unit', $counter.unit)
                             $xmlWriter.WriteEndElement()
                         }
                      }
@@ -536,6 +540,8 @@ Function Start-NTAPPerformance(){
                             $XmlWriter.WriteAttributeString('Max', $sd.SD_Max)
                             $XmlWriter.WriteAttributeString('Min', $sd.SD_Min)
                             $XmlWriter.WriteAttributeString('SD', $sd.SD)
+                            $XmlWriter.WriteAttributeString('Desc', $counter.Description)
+                            $XmlWriter.WriteAttributeString('unit', $counter.unit)
                             $xmlWriter.WriteEndElement()
                         }
                      }

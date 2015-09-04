@@ -1,11 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fn="http://www.w3.org/2005/xpath-functions">
   <xsl:output omit-xml-declaration="yes" indent="yes"/>
+  <xsl:decimal-format name="us" decimal-separator='.' grouping-separator=',' />
   <xsl:strip-space elements="*"/>
   <xsl:template match="/">
     <html>
         <head>
           <script>
+            <![CDATA[
+            function removeEmptyTables(){
+
+              var table = document.getElementsByTagName("table");
+              for(var i=0;i<table.length;i++){
+                if(table[i].querySelectorAll("td[bgcolor]").length<1)
+                {
+                  table[i].className = 'hidden';
+                }
+                else{
+                  var rows = document.getElementsByTagName("tr");
+
+                  for(var i=0;i<rows.length;i++){
+                    cells = rows[i].querySelectorAll("td[bgcolor]");
+                    if(cells.length==0){
+                      if(rows[i].parentElement.nodeName=="TBODY"){
+                        rows[i].className = 'hidden';
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            function expandRows(theElement){
+              if(theElement.parentElement.querySelectorAll("tr[style='display: none;']")){
+                theNodes = theElement.parentElement.querySelectorAll("tbody > tr");
+                for(var i=0;i<theNodes.length;i++){
+                  if(theNodes[i].className == 'hidden'){
+                    theNodes[i].className = 'shown';
+                  }
+                  else{
+                    if(theNodes[i].className == 'shown'){
+                      theNodes[i].className = 'hidden';
+
+                    }
+                  }
+                }
+              }
+            }
+            function expandTable(theElement){
+              if(theElement.querySelectorAll("Table")){
+                theNodes = theElement.querySelectorAll("table");
+                for(var i=0;i<theNodes.length;i++){
+                  if(theNodes[i].className == 'hidden'){
+                    theNodes[i].className = 'shown';
+                  }
+                  else{
+                    if(theNodes[i].className == 'shown'){
+                      theNodes[i].className = 'hidden';
+
+                    }
+                  }
+                }
+              }
+            }
+            ]]>
           </script>
           <style>
             Body{
@@ -64,7 +121,7 @@
             	color:#000000;
               width:175;
             }
-            .NTAPPerf tbody th{
+            .NTAPPerf thead th{
             	vertical-align:middle;
             	border:1px solid #808184;
             	border-width:0px 0px 1px 0px;
@@ -92,7 +149,7 @@
             .h1_header{
               display: table;
               margin: 0 auto;
-              PADDING-TOP:2px;
+              PADDING-TOP:20px;
               PADDING-BOTTOM:0;
             	FONT-SIZE: 28px;
             	MARGIN-BOTTOM: 0;
@@ -100,6 +157,7 @@
             	FONT-FAMILY: Arial;
             	WIDTH: 700;
               Height:30px;
+              line-height:30px;
             	TEXT-INDENT: 10;
             	BACKGROUND-COLOR: #F2F2F2;
               text-transform: capitalize;
@@ -111,7 +169,7 @@
               FONT-WEIGHT: bold;
               FONT-SIZE: 18pt;
               MARGIN-BOTTOM: 0;
-
+              text-align: left;
               COLOR: #FFFFFF;
               FONT-FAMILY: Arial;
               WIDTH: 700;
@@ -137,6 +195,15 @@
             .hidden{
               display: none;
             }
+            .shown{
+
+            }
+            .carrot{
+              font-size:8px;
+              font-family:Arial;
+              font-weight:normal;
+              vertical-align:middle;
+            }
           </style>
           <title>NTAPPerf Report</title>
         </head>
@@ -153,24 +220,31 @@
     </html>
   </xsl:template>
   <xsl:template match="Category">
-    <div class="h2_header" style="WIDTH: 700"><xsl:value-of select="@Name"/> Details </div>
+    <span>
+      <div class="h2_header" style="WIDTH: 700; text-align: left;" onclick="expandTable(this.parentElement)">
+          <xsl:attribute name="title">Click to see more details on the <xsl:value-of select="@Name"/> information. </xsl:attribute>
+          <xsl:value-of select="@Name"/> Details  &#10095;
+      </div>
       <xsl:apply-templates select="Instance"/>
+    </span>
   </xsl:template>
   <xsl:template match="Instance">
     <div class="NTAPPerf">
       <Table>
         <thead>
-          <tr id="Instance">
-            <td colspan="4">Instance: <xsl:value-of select="@Name"/></td>
+          <tr id="Instance" onclick="expandRows(this.parentElement)">
+            <xsl:attribute name="title">Click to see more details on the instance of: <xsl:value-of select="@Name"/> </xsl:attribute>
+            <td colspan="5">Instance: <xsl:value-of select="@Name"/>  &#10095;</td>
           </tr>
-        </thead>
-        <tbody>
           <tr>
+            <th style="width:10px">USE</th>
             <th>Counter Name</th>
             <th >Min</th>
             <th >Mean</th>
             <th >Max</th>
           </tr>
+        </thead>
+        <tbody>
 
           <xsl:apply-templates select="Utilization/Counter"/>
           <xsl:apply-templates select="Saturation/Counter"/>
@@ -182,24 +256,55 @@
   </xsl:template>
   <xsl:template match="Utilization/Counter">
     <tr>
-      <td><xsl:value-of select="@Name"/></td>
-      <td><xsl:value-of select="@Min"/></td>
-      <td><xsl:value-of select="@Mean_Value"/></td>
-      <td><xsl:value-of select="@Max"/></td>
+      <td style="width:10px" title="Utilization">U</td>
+      <td>
+        <xsl:attribute name="title"><xsl:value-of select="@Desc"/></xsl:attribute>
+        <xsl:value-of select="@Name"/>
+      </td>
+      <td><xsl:value-of select="@Min"/> <xsl:value-of select="@unit"/></td>
+      <td><xsl:value-of select="@Mean_Value"/> <xsl:value-of select="@unit"/></td>
+      <td><xsl:value-of select="@Max"/> <xsl:value-of select="@unit"/></td>
     </tr>
   </xsl:template>
   <xsl:template match="Saturation/Counter">
     <tr>
-      <td><xsl:value-of select="@Name"/></td>
-      <td><xsl:value-of select="@Min"/></td>
-      <td><xsl:value-of select="@Mean_Value"/></td>
-      <td><xsl:value-of select="@Max"/></td>
+      <td style="width:10px" title="Saturation">S</td>
+      <td>
+        <xsl:attribute name="title"><xsl:value-of select="@Desc"/></xsl:attribute>
+        <xsl:value-of select="@Name"/>
+      </td>
+      <td><xsl:value-of select="format-number(@Min, '###,###.00;(###,###.00)', 'us')"/>&#160;<xsl:value-of select="@unit"/></td>
+      <td>
+        <xsl:if test="(@Mean_Value &gt; 10000)">
+          <xsl:attribute name="bgcolor">#F1655C</xsl:attribute>
+          <xsl:attribute name="title">The saturation of this resource is above 10ms. This is an indicator of a problem getting serious</xsl:attribute>
+        </xsl:if>
+        <xsl:if test="((@Mean_Value &gt;= 1000) and (@Mean_Value &lt;= 10000))">
+          <xsl:attribute name="bgcolor">#F4A71C</xsl:attribute>
+          <xsl:attribute name="title">The saturation of this resource is above 1ms. This may indicate the start of a problem.</xsl:attribute>
+        </xsl:if>
+        <xsl:value-of select="format-number(@Mean_Value, '###,###.00;(###,###.00)', 'us')"/>&#160;<xsl:value-of select="@unit"/></td>
+      <td><xsl:value-of select="format-number(@Max, '###,###.00;(###,###.00)', 'us')"/>&#160;<xsl:value-of select="@unit"/></td>
     </tr>
   </xsl:template>
   <xsl:template match="Error/Counter">
     <tr>
-      <td><xsl:value-of select="@Name"/></td>
-      <td><xsl:value-of select="@Min"/></td>
+      <td style="width:10px" title="Error">E</td>
+      <td>
+        <xsl:attribute name="title"><xsl:value-of select="@Desc"/></xsl:attribute>
+        <xsl:value-of select="@Name"/>
+      </td>
+      <td>
+        <xsl:if test="(@Min &gt; 10)">
+          <xsl:attribute name="bgcolor">#F1655C</xsl:attribute>
+          <xsl:attribute name="title">The errors present indicate a serious problem</xsl:attribute>
+        </xsl:if>
+        <xsl:if test="((@Min &lt;= '1') and (@Min &gt;= '10'))">
+          <xsl:attribute name="bgcolor">#F4A71C</xsl:attribute>
+          <xsl:attribute name="title">The errors present indicate a problem</xsl:attribute>
+        </xsl:if>
+        <xsl:value-of select="@Min"/>
+      </td>
       <td><xsl:value-of select="@Mean_Value"/></td>
       <td><xsl:value-of select="@Max"/></td>
     </tr>

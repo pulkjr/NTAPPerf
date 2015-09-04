@@ -149,29 +149,6 @@ smb2,read_class_latency,Saturation,read_class_ops,Average latency for SMB2/SMB3 
 smb2,read_class_ops,Utilization,,Number of SMB2/SMB3 read class operations,admin,rate,1,per_sec
 smb2,write_class_latency,Saturation,write_class_ops,Average latency for SMB2/SMB3 write class operations,admin,average,1,microsec
 smb2,write_class_ops,Utilization,,Number of SMB2/SMB3 write class operations,admin,rate,1,per_sec
-spinhi,spinhi_avg_filecb_latency,Saturation,spinhi_avg_filecb_latency_base,Average latency of the spinhi callback operations,admin,average,11111,microsec
-spinhi,spinhi_avg_fileop_latency,Saturation,spinhi_avg_fileop_latency_base,Average latency of the spinhi file operations,admin,average,11111,microsec
-spinhi,spinhi_current_ops,Utilization,,Current number of spinhi operations,admin,delta,11111,none
-spinhi,spinhi_deferred_ops,Utilization,,Maximum number of deferred spinhi operations,admin,delta,11111,none
-spinhi,spinhi_filecb_latency_histogram,Saturation,,Histogram of spinhi file operations callback latency,admin,delta,11111,none
-spinhi,spinhi_fileop_latency_histogram,Saturation,,Histogram of spinhi file operations latency,admin,delta,11111,none
-spinhi,spinhi_fileops,Utilization,,Total number of spinhi file operations per second,admin,rate,11111,per_sec
-spinhi,spinhi_fileops_current,Utilization,,Number of spinhi file operations in progress,admin,raw,11111,none
-spinhi,spinhi_maximum_ops,Utilization,,Maximum number of spinhi operations,admin,delta,11111,none
-spinhi,spinhi_pool_current_deferred_requests,Error,,Number of requests currently deferred,admin,raw,11111,none
-spinhi,spinhi_pool_max_deferred_requests,Error,,Maximum number of requests deferred at one time,admin,raw,11111,none
-spinhi,spinhi_pool_total_deferred_requests,Error,,Total number of requests that were ever deferred,admin,raw,11111,none
-spinhi,spinhi_pool_total_marshall_errors,Error,,Total number of marshall errors,admin,raw,11111,none
-spinhi,spinhi_pool_total_unmarshall_errors,Error,,Total number of unmarshall errors,admin,raw,11111,none
-spinhi,spinhi_read_latency,Saturation,spinhi_avg_read_latency_base,Average latency for spinhi read operations in microseconds,admin,average,11111,microsec
-spinhi,spinhi_read_latency_histogram,Saturation,,Histogram of spinhi read latency,admin,delta,11111,none
-spinhi,spinhi_read_ops,Utilization,,Total observed spinhi read operations per second,admin,rate,11111,per_sec
-spinhi,spinhi_setattr_latency_histogram,Saturation,,Histogram of spinhi setattr latency,admin,delta,11111,none
-spinhi,spinhi_total_ops,Utilization,,Total number of spinhi operations,admin,delta,11111,none
-spinhi,spinhi_unlink_latency_histogram,Saturation,,Histogram of spinhi unlink latency,admin,delta,11111,none
-spinhi,spinhi_write_latency,Saturation,spinhi_avg_write_latency_base,Average latency for spinhi write operations in microseconds,admin,average,11111,microsec
-spinhi,spinhi_write_latency_histogram,Saturation,,Histogram of spinhi write latency,admin,delta,11111,none
-spinhi,spinhi_write_ops,Utilization,,Total observed spinhi write operations per second,admin,rate,11111,per_sec
 ext_cache_obj,readio_avg_latency,Saturation,readio_chains,Average latency of read I/Os,admin,average,11111,millisec
 ext_cache_obj,writeio_avg_latency,Saturation,writeio_chains,Average latency of write I/Os,admin,average,11111,millisec
 lun,avg_latency,Saturation,total_ops,Average latency in milliseconds for all operations on the LUN,admin,average,11100,millisec
