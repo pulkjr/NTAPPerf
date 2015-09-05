@@ -317,11 +317,11 @@
         <xsl:value-of select="format-number(@Min, '###,###.00;(###,###.00)', 'us')"/>
       </td>
       <td>
-        <xsl:if test="(@Mean_Value &gt; 10)">
+        <xsl:if test="(@SD &gt; 10)">
           <xsl:attribute name="bgcolor">#F1655C</xsl:attribute>
           <xsl:attribute name="title">The errors present indicate a serious problem</xsl:attribute>
         </xsl:if>
-        <xsl:if test="((@Mean_Value &lt;= '1') and (@Mean_Value &gt;= '10'))">
+        <xsl:if test="((@SD &lt;= '1') and (@SD &gt;= '10'))">
           <xsl:attribute name="bgcolor">#F4A71C</xsl:attribute>
           <xsl:attribute name="title">The errors present indicate a problem</xsl:attribute>
         </xsl:if>

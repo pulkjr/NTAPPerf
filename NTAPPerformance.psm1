@@ -54,6 +54,10 @@ Function Start-NTAPPerformance(){
         [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 1, HelpMessage = 'This is the path to the Counter Definition File.')]
         [ValidateNotNullOrEmpty()]
         [System.IO.FileInfo]$CounterMetaPath = (Get-Module NTAPPerformance).ModuleBase + "\Resources\CounterMeta.csv"
+        ,
+        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 1, HelpMessage = 'This is the path to the Counter Definition File.')]
+        [ValidateNotNullOrEmpty()]
+        [System.IO.FileInfo]$TransformXSL = (Get-Module NTAPPerformance).ModuleBase + "\Resources\NTAPPerf_Transform.xsl"
     )
     Begin{
         Function New-PeformanceObject(){
@@ -296,6 +300,12 @@ Function Start-NTAPPerformance(){
                         #5 = FCoE
                         $PerformanceFilter = 0
                         foreach($num in ($response -split " ") | sort -Unique){
+                            switch($num)
+                            {
+                                3{$num = 4}
+                                4{$num = 8}
+                                5{$num = 16}
+                            }
                             $PerformanceFilter += $num -as [int32]
                         }
                         $NTAPCustomer.PerceivedLatentProtocol = $PerformanceFilter
@@ -424,13 +434,9 @@ Function Start-NTAPPerformance(){
 
 
         }
-        Function Process-NTAPPerfData(){
-            PARAM($EnvironmentObj,$PerformanceArray)
-
-        }
         Function Output-NTAPStats{
             [CmdletBinding(DefaultParameterSetName = 'Name')]
-            PARAM($EnvironmentObj,$PerformanceArray,$OutputPath)
+            PARAM($EnvironmentObj,$PerformanceArray,$OutputPath,$TransformXSL)
             function Get-StandardDeviation {            
                 [CmdletBinding()]            
                 param (            
@@ -451,14 +457,34 @@ Function Start-NTAPPerformance(){
                 $SDObj.SD_Max = [System.Math]::Round($SDObj.Mean + $SDObj.SD ,2)
                 Return $SDObj           
             }
+            Function Convert-XMLtoHTML{
+                param (
+                    [Parameter(Mandatory = $true)]
+                    [System.IO.FileInfo]$inputFile
+                    ,
+                    [Parameter(Mandatory = $true)]
+                    $OutputPath
+                )
+
+                $OutPath = $OutputPath + "\Performance" +  ('{0:yyyyMMdd}' -f  (get-date)) + ".html"
+
+                $xslt = New-Object System.Xml.Xsl.XslCompiledTransform
+                $xslt.Load($TransformXSL)
+                $xslt.Transform($inputFile,$OutPath)
+                if(Test-Path $OutPath){
+                    Write-Host -ForegroundColor Green "$OutPath"
+                }
+            }
             $DefaultLocation = [environment]::getfolderpath("MyDocuments")
             # The location of the Performance Ouput XML
             if(!$OutputPath){
-                $OutPath = "$DefaultLocation\Performance1" +  ('{0:yyyyMMdd}' -f  (get-date)) + ".xml"
+                $OutputPath = $DefaultLocation
+                $OutPath = "$DefaultLocation\Performance" +  ('{0:yyyyMMdd}' -f  (get-date)) + ".xml"
             }else{
+                [String]$DefaultLocation = ($OutputPath.FullName)
                 $OutPath = ($OutputPath.FullName) + "\Performance" +  ('{0:yyyyMMdd}' -f  (get-date)) + ".xml"
             }
-
+            Write-Host -ForegroundColor Green "Converting output"
             # XMLTextWriter to create the XML
             $XmlWriter = New-Object System.XMl.XmlTextWriter($OutPath,$Null)
 
@@ -470,7 +496,7 @@ Function Start-NTAPPerformance(){
             $xmlWriter.WriteStartDocument()
 
             # Set XSL statements
-            $xmlWriter.WriteProcessingInstruction("xml-stylesheet", "type='text/xsl' href='NTAPPerf_transform.xsl'")
+            $xmlWriter.WriteProcessingInstruction("xml-stylesheet", "type='text/xsl' href='$TransformXSL'")
 
             # Create root element "Perf" and add initial attributes
             $XmlWriter.WriteComment('Performance Analysis from NTAP Performance Module')
@@ -559,6 +585,11 @@ Function Start-NTAPPerformance(){
             $xmlWriter.WriteEndDocument()
             $xmlWriter.Flush()
             $xmlWriter.Close()
+            if(Test-Path $OutPath){
+                Write-Host -ForegroundColor Green "The results have been placed at the following location(s):`n $OutPath"
+            }
+            Convert-XMLtoHTML -inputFile $OutPath -OutputPath $OutputPath
+
         }
     }
     Process{
@@ -583,10 +614,10 @@ Function Start-NTAPPerformance(){
                 Log-Error -ErrorDesc "The Array of Performance Counters is missing or there are not valid instances." -Code 309 -Category ObjectNotFound -ExitGracefully
             }
             if($OutputPath){
-                Output-NTAPStats -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray -OutputPath $OutputPath
+                Output-NTAPStats -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray -OutputPath $OutputPath -TransformXSL $TransformXSL
             }
             else{
-                Output-NTAPStats -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray
+                Output-NTAPStats -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray -TransformXSL $TransformXSL
             }
         }
         else{
