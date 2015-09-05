@@ -213,7 +213,7 @@
             <xsl:apply-templates select="Category"/>
             <xsl:apply-templates/>
             <div class="footer" style="WIDTH: 700">
-              <span>Developed By: Joseph Pulk</span>
+              <span>Developed By: Joseph</span>
             </div>
           </div>
         </body>
@@ -237,11 +237,11 @@
             <td colspan="5">Instance: <xsl:value-of select="@Name"/>  &#10095;</td>
           </tr>
           <tr>
-            <th style="width:10px">USE</th>
+            <th style="width:10px" title="Utilization, Saturation, Errors">USE</th>
             <th>Counter Name</th>
-            <th >Min</th>
-            <th >Mean</th>
-            <th >Max</th>
+            <th title="The Mean minus standard deviation">Min</th>
+            <th title="Sum of values divided by the count of itterations.">Mean</th>
+            <th title="The Mean plus standard deviation">Max</th>
           </tr>
         </thead>
         <tbody>
@@ -261,9 +261,12 @@
         <xsl:attribute name="title"><xsl:value-of select="@Desc"/></xsl:attribute>
         <xsl:value-of select="@Name"/>
       </td>
-      <td><xsl:value-of select="@Min"/> <xsl:value-of select="@unit"/></td>
-      <td><xsl:value-of select="@Mean_Value"/> <xsl:value-of select="@unit"/></td>
-      <td><xsl:value-of select="@Max"/> <xsl:value-of select="@unit"/></td>
+      <td>
+        <xsl:attribute name="title"><xsl:value-of select="format-number(@Mean_Value, '###,###.00;(###,###.00)', 'us')"/>-<xsl:value-of select="format-number(@SD, '###,###.00;(###,###.00)', 'us')"/> SD</xsl:attribute>
+        <xsl:value-of select="format-number(@Min, '###,###.00;(###,###.00)', 'us')"/>&#160;<xsl:value-of select="@unit"/>
+      </td>
+      <td><xsl:value-of select="format-number(@Mean_Value, '###,###.00;(###,###.00)', 'us')"/>&#160;<xsl:value-of select="@unit"/></td>
+      <td><xsl:value-of select="format-number(@Max, '###,###.00;(###,###.00)', 'us')"/>&#160;<xsl:value-of select="@unit"/></td>
     </tr>
   </xsl:template>
   <xsl:template match="Saturation/Counter">
@@ -273,15 +276,30 @@
         <xsl:attribute name="title"><xsl:value-of select="@Desc"/></xsl:attribute>
         <xsl:value-of select="@Name"/>
       </td>
-      <td><xsl:value-of select="format-number(@Min, '###,###.00;(###,###.00)', 'us')"/>&#160;<xsl:value-of select="@unit"/></td>
       <td>
-        <xsl:if test="(@Mean_Value &gt; 10000)">
-          <xsl:attribute name="bgcolor">#F1655C</xsl:attribute>
-          <xsl:attribute name="title">The saturation of this resource is above 10ms. This is an indicator of a problem getting serious</xsl:attribute>
+        <xsl:attribute name="title"><xsl:value-of select="format-number(@Mean_Value, '###,###.00;(###,###.00)', 'us')"/>-<xsl:value-of select="format-number(@SD, '###,###.00;(###,###.00)', 'us')"/> SD</xsl:attribute>
+        <xsl:value-of select="format-number(@Min, '###,###.00;(###,###.00)', 'us')"/>&#160;<xsl:value-of select="@unit"/>
+      </td>
+      <td>
+        <xsl:if test="(@unit='microsec')">
+          <xsl:if test="(@Mean_Value &gt; 10000)">
+            <xsl:attribute name="bgcolor">#F1655C</xsl:attribute>
+            <xsl:attribute name="title">The saturation of this resource is above 10ms. This is an indicator of a problem getting serious</xsl:attribute>
+          </xsl:if>
+          <xsl:if test="((@Mean_Value &gt;= 1000) and (@Mean_Value &lt;= 10000))">
+            <xsl:attribute name="bgcolor">#F4A71C</xsl:attribute>
+            <xsl:attribute name="title">The saturation of this resource is above 1ms. This may indicate the start of a problem.</xsl:attribute>
+          </xsl:if>
         </xsl:if>
-        <xsl:if test="((@Mean_Value &gt;= 1000) and (@Mean_Value &lt;= 10000))">
-          <xsl:attribute name="bgcolor">#F4A71C</xsl:attribute>
-          <xsl:attribute name="title">The saturation of this resource is above 1ms. This may indicate the start of a problem.</xsl:attribute>
+        <xsl:if test="(@unit='millisec')">
+          <xsl:if test="(@Mean_Value &gt; 10)">
+            <xsl:attribute name="bgcolor">#F1655C</xsl:attribute>
+            <xsl:attribute name="title">The saturation of this resource is above 10ms. This is an indicator of a problem getting serious</xsl:attribute>
+          </xsl:if>
+          <xsl:if test="((@Mean_Value &gt;= 1) and (@Mean_Value &lt;= 10))">
+            <xsl:attribute name="bgcolor">#F4A71C</xsl:attribute>
+            <xsl:attribute name="title">The saturation of this resource is above 1ms. This may indicate the start of a problem.</xsl:attribute>
+          </xsl:if>
         </xsl:if>
         <xsl:value-of select="format-number(@Mean_Value, '###,###.00;(###,###.00)', 'us')"/>&#160;<xsl:value-of select="@unit"/></td>
       <td><xsl:value-of select="format-number(@Max, '###,###.00;(###,###.00)', 'us')"/>&#160;<xsl:value-of select="@unit"/></td>
@@ -295,18 +313,21 @@
         <xsl:value-of select="@Name"/>
       </td>
       <td>
-        <xsl:if test="(@Min &gt; 10)">
+        <xsl:attribute name="title"><xsl:value-of select="format-number(@Mean_Value, '###,###.00;(###,###.00)', 'us')"/>-<xsl:value-of select="format-number(@SD, '###,###.00;(###,###.00)', 'us')"/> SD</xsl:attribute>
+        <xsl:value-of select="format-number(@Min, '###,###.00;(###,###.00)', 'us')"/>
+      </td>
+      <td>
+        <xsl:if test="(@Mean_Value &gt; 10)">
           <xsl:attribute name="bgcolor">#F1655C</xsl:attribute>
           <xsl:attribute name="title">The errors present indicate a serious problem</xsl:attribute>
         </xsl:if>
-        <xsl:if test="((@Min &lt;= '1') and (@Min &gt;= '10'))">
+        <xsl:if test="((@Mean_Value &lt;= '1') and (@Mean_Value &gt;= '10'))">
           <xsl:attribute name="bgcolor">#F4A71C</xsl:attribute>
           <xsl:attribute name="title">The errors present indicate a problem</xsl:attribute>
         </xsl:if>
-        <xsl:value-of select="@Min"/>
+        <xsl:value-of select="format-number(@Mean_Value, '###,###.00;(###,###.00)', 'us')"/>
       </td>
-      <td><xsl:value-of select="@Mean_Value"/></td>
-      <td><xsl:value-of select="@Max"/></td>
+      <td><xsl:value-of select="format-number(@Max, '###,###.00;(###,###.00)', 'us')"/></td>
     </tr>
   </xsl:template>
 </xsl:stylesheet>
