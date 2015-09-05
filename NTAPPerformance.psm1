@@ -47,11 +47,19 @@ Function Start-NTAPPerformance(){
         [ValidateNotNullOrEmpty()]
         [System.IO.DirectoryInfo]$OutputPath
         ,
-        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 1, HelpMessage = 'This is the path to the directory for the Log files.')]
+        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 2, HelpMessage = 'The amount of times that the tool will pull stats from the cluster')]
+        [ValidateNotNullOrEmpty()]
+        [int]$Iterations = 4
+        ,
+        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 3, HelpMessage = 'The time between iterations in seconds.')]
+        [ValidateNotNullOrEmpty()]
+        [int]$WaitTime = 10
+        ,
+        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 4, HelpMessage = 'This is the path to the directory for the Log files.')]
         [ValidateNotNullOrEmpty()]
         [System.IO.DirectoryInfo]$LogPath
         ,
-        [Parameter(ParameterSetName = 'Name', Mandatory = $false, Position = 1, HelpMessage = 'This is the path to the Counter Definition File.')]
+        [Parameter(ParameterSetName = 'Name', Mandatory = $false, HelpMessage = 'This is the path to the Counter Definition File.')]
         [ValidateNotNullOrEmpty()]
         [System.IO.FileInfo]$CounterMetaPath = (Get-Module NTAPPerformance).ModuleBase + "\Resources\CounterMeta.csv"
         ,
@@ -608,7 +616,7 @@ Function Start-NTAPPerformance(){
             $EnvironmentObj = Get-NTAPEnvironment -NTAPCustomer $NTAPCustomer
             $PerformanceArray = New-PeformanceObject -EnvironmentObj $EnvironmentObj
             if($PerformanceArray){
-               $PerformanceArray = Start-NcPerfPull -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray
+               $PerformanceArray = Start-NcPerfPull -EnvironmentObj $EnvironmentObj -PerformanceArray $PerformanceArray -count $Iterations -wait $WaitTime
             }
             Else{
                 Log-Error -ErrorDesc "The Array of Performance Counters is missing or there are not valid instances." -Code 309 -Category ObjectNotFound -ExitGracefully
