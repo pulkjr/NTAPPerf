@@ -16,9 +16,6 @@ The chosen method for solving this problem will be to capture statistics, analyz
 ## Initial plans ##
 Ideally one would use the cm stats that are pulled already from each controller. These are archived for use but I have not found a good method of retrieval for these. Thus my first attempt is to use the Get-NcPerfData Method. I'm pulling the stats in 10 second intervals for all the stats pre-definded.
 
-## Future Plans ##
-Still figuring this out. Need to get a working draft completed to ensure that it is technically possible.
-
 ## System Requirements ##
 1. Microsoft Windows PowerShell 2.0 or higher
 2. Microsoft .Net Framework 3.5 (with PowerShell 2.0) or higher
