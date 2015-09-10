@@ -3,25 +3,25 @@ Function Start-NTAPPerformance(){
     <#
         .SYNOPSIS
         Gathers performance data from cDOT storage systems.
-        
+
         .DESCRIPTION
-        Uses the Data ONTAP PowerShell toolkit to gather performance and configuration about a system. 
-        
+        Uses the Data ONTAP PowerShell toolkit to gather performance and configuration about a system.
+
         .PARAMETER Name
         The system name or IP address of the cluster admin SVM to gather the data from.
 
         .EXAMPLE
         PS C:\> Start-NTAPPerformance
-        
+
         .LINK
         https://none
-        
+
         .INPUTS
         [System.String[]] or [NetApp.Ontapi.AbstractController[]]
-        
+
         .OUTPUTS
         []
-        
+
         .NOTES
         AUTHOR : Joseph Pulk
         REQUIRES
@@ -33,7 +33,7 @@ Function Start-NTAPPerformance(){
         - Perfstat Collection
         - CMPG Setup and Collection
     #>
-    
+
     [CmdletBinding(DefaultParameterSetName = 'Name')]
     [OutputType([System.Management.Automation.PSObject])]
     param (
@@ -79,7 +79,7 @@ Function Start-NTAPPerformance(){
                 }
                 $PerformanceArray += $instanceObj
             }
-            
+
             return $PerformanceArray
         }
         Function New-EnvironmentObject(){
@@ -87,7 +87,6 @@ Function Start-NTAPPerformance(){
             $EnvironmentObj.PsObject.TypeNames.Add('NetApp.Performance.Environment')
             return $EnvironmentObj
         }
-
         Function Get-NTAPEnvironment{
             PARAM($NTAPCustomer)
             $EnvironmentObj = New-EnvironmentObject
@@ -119,15 +118,14 @@ Function Start-NTAPPerformance(){
 
             return $EnvironmentObj
         }
-
         Function Start-NcPerfPull{
             param($EnvironmentObj,$PerformanceArray,$count=4,$wait=10)
-            
+
             for($currentCount=1;$currentcount -le $count;$currentCount++){
                 foreach($ObjName in ($EnvironmentObj.Performance | Select -Unique Name)){
-                    $PerformanceValues = Get-NcPerfData -Name $ObjName.Name -Instance ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name} |select -first 1).Instances.name -Counter ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name}).Counters 
+                    $PerformanceValues = Get-NcPerfData -Name $ObjName.Name -Instance ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name} |select -first 1).Instances.name -Counter ($EnvironmentObj.Performance | ?{$_.Name -eq $ObjName.Name}).Counters
                     foreach($performanceValue in $PerformanceValues){
-                    
+
                         ($PerformanceArray | ?{$_.uuid -eq $performanceValue.uuid}).PerfObjects.Counters += $performanceValue.Counters
 
                     }
@@ -189,7 +187,7 @@ Function Start-NTAPPerformance(){
                 $browser = New-Object System.Net.WebClient
                 $browser.Credentials = $Credential
                 $url
-    
+
                 #$browser.DownloadFile($url, $DestinationPath)
                 }
             }
@@ -210,7 +208,7 @@ Function Start-NTAPPerformance(){
             }
             catch
             {
-    
+
             }
         }
         Function New-NTAPCustomer(){
@@ -247,7 +245,7 @@ Function Start-NTAPPerformance(){
 
             $options = [System.Management.Automation.Host.ChoiceDescription[]]($Yes, $No)
 
-            $NTAPCustomer.SendToSupport = $host.ui.PromptForChoice($title, $message, $options, 1) 
+            $NTAPCustomer.SendToSupport = $host.ui.PromptForChoice($title, $message, $options, 1)
 
             if($NTAPCustomer.SendToSupport -ne 1)
             {
@@ -269,7 +267,7 @@ Function Start-NTAPPerformance(){
 
             $options = [System.Management.Automation.Host.ChoiceDescription[]]($Yes, $No)
 
-            $NTAPCustomer.KnowTheProtocol = $host.ui.PromptForChoice($title, $message, $options, 0) 
+            $NTAPCustomer.KnowTheProtocol = $host.ui.PromptForChoice($title, $message, $options, 0)
             #endregion
             #region - Q2
             CLS
@@ -289,16 +287,16 @@ Function Start-NTAPPerformance(){
 
                 $iSCSI = New-Object System.Management.Automation.Host.ChoiceDescription "&iSCSI", `
                     "A SAN connection via iSCSI is experiencing latency (e.g. LUN, Physical Server, Virtual Server ...)"
-    
+
                 $FCP = New-Object System.Management.Automation.Host.ChoiceDescription "&FCP", `
                     "A SAN connection via FCP is experiencing latency (e.g. LUN, Physical Server, Virtual Server ...)"
-    
+
                 $FCoE = New-Object System.Management.Automation.Host.ChoiceDescription "FCo&E", `
                     "A SAN connection via FCoE is experiencing latency (e.g. LUN, Physical Server, Virtual Server ...)"
-    
+
                 $options = [System.Management.Automation.Host.ChoiceDescription[]]($Unknown, $CIFS, $NFS, $iSCSI, $FCP, $FCoE)
 
-                $response = $host.ui.PromptForChoice($title, $message, $options, [int[]](0)) 
+                $response = $host.ui.PromptForChoice($title, $message, $options, [int[]](0))
                 if($response){
                         #54321
                         #1 = CIFS
@@ -317,7 +315,7 @@ Function Start-NTAPPerformance(){
                             $PerformanceFilter += $num -as [int32]
                         }
                         $NTAPCustomer.PerceivedLatentProtocol = $PerformanceFilter
-          
+
                 }
             }
             #endregion
@@ -338,7 +336,7 @@ Function Start-NTAPPerformance(){
 
                 $options = [System.Management.Automation.Host.ChoiceDescription[]]($Yes, $No)
 
-                $response = $host.ui.PromptForChoice($title, $message, $options, 0) 
+                $response = $host.ui.PromptForChoice($title, $message, $options, 0)
                 if($response -eq 0)
                 {
                     $NTAPCustomer.Cluster.Connection = $global:CurrentNcController
@@ -371,7 +369,7 @@ Function Start-NTAPPerformance(){
                 $IPQuestion.Add($f)
                 do
                 {
-            
+
                     CLS
                     if((!$NTAPCustomer.Cluster.Hostname -and !$NTAPCustomer.Cluster.IPAddress) -and $ranOnce -eq 1)
                     {
@@ -421,7 +419,7 @@ Function Start-NTAPPerformance(){
 
                     }
                 }While(!$NTAPCustomer.Cluster.IPAddress -and !$NTAPCustomer.Cluster.Credentials)
-        
+
                 if(!$NTAPCustomer.Cluster.Connection){
                     Log-Write -LineValue "No Connection to Cluster Present, Attempting to Connect to: $($NTAPCustomer.Cluster.IPAddress)" -Code 106 -Severity INFORMATIONAL
                     if($NTAPCustomer.Cluster.IPAddress){
@@ -445,25 +443,25 @@ Function Start-NTAPPerformance(){
         Function Output-NTAPStats{
             [CmdletBinding(DefaultParameterSetName = 'Name')]
             PARAM($EnvironmentObj,$PerformanceArray,$OutputPath,$TransformXSL)
-            function Get-StandardDeviation {            
-                [CmdletBinding()]            
-                param (            
-                  [double[]]$numbers            
-                )            
+            function Get-StandardDeviation {
+                [CmdletBinding()]
+                param (
+                  [double[]]$numbers
+                )
                $SDObj = New-Object -TypeName PSobject -Property @{Count=$null;Mean=$null;SD=$null;SD_Max=$null;SD_Min=$null}
-                $avg = $numbers | Measure-Object -Average | select Count, Average            
+                $avg = $numbers | Measure-Object -Average | select Count, Average
                 $SDObj.Count = $avg.count
-                $SDObj.Mean = $avg.Average 
-                $popdev = 0            
-            
-                foreach ($number in $numbers){            
-                  $popdev += [math]::pow(($number - $SDObj.Mean), 2)            
-                }            
-    
+                $SDObj.Mean = $avg.Average
+                $popdev = 0
+
+                foreach ($number in $numbers){
+                  $popdev += [math]::pow(($number - $SDObj.Mean), 2)
+                }
+
                 $SDObj.SD  = [System.Math]::Round([math]::sqrt($popdev / ($SDObj.Count-1)),2)
                 $SDObj.SD_Min = [System.Math]::Round($SDObj.Mean - $SDObj.SD ,2)
                 $SDObj.SD_Max = [System.Math]::Round($SDObj.Mean + $SDObj.SD ,2)
-                Return $SDObj           
+                Return $SDObj
             }
             Function Convert-XMLtoHTML{
                 param (
@@ -602,7 +600,7 @@ Function Start-NTAPPerformance(){
     }
     Process{
         $ModuleVersion = (Get-Module NTAPPerformance).Version
-    
+
         Initialize-NTAPLogs -ModuleVersion $ModuleVersion -logPath $LogPath
 
         if(!$NTAPCustomer)
@@ -631,14 +629,10 @@ Function Start-NTAPPerformance(){
         else{
             Log-Error -ErrorDesc "Customer Object Missing. Please run the Command Again" -Code 307 -Category ObjectNotFound -ExitGracefully
         }
-    
+
     }
 }
 
 Function Stop-NTAPPerformance(){
 
 }
-
-
-
-
