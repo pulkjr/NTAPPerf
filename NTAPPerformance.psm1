@@ -1,39 +1,5 @@
 ﻿#NTAPPerformance.psm1
 Function Start-NTAPPerformance(){
-    <#
-        .SYNOPSIS
-        Gathers performance data from cDOT storage systems.
-        
-        .DESCRIPTION
-        Uses the Data ONTAP PowerShell toolkit to gather performance and configuration about a system. 
-        
-        .PARAMETER Name
-        The system name or IP address of the cluster admin SVM to gather the data from.
-
-        .EXAMPLE
-        PS C:\> Start-NTAPPerformance
-        
-        .LINK
-        https://none
-        
-        .INPUTS
-        [System.String[]] or [NetApp.Ontapi.AbstractController[]]
-        
-        .OUTPUTS
-        []
-        
-        .NOTES
-        AUTHOR : Joseph Pulk
-        REQUIRES
-        : PowerShell 2.0
-        : Data ONTAP PowerShell Toolkit 3.2.1
-        BURTS
-        : 20150719.1 - Collection of data to send to support errors stating missing functionality.
-        REQUESTED FUNCTIONALITY FOR FUTURE RELEASES
-        - Perfstat Collection
-        - CMPG Setup and Collection
-    #>
-    
     [CmdletBinding(DefaultParameterSetName = 'Name')]
     [OutputType([System.Management.Automation.PSObject])]
     param (
@@ -285,7 +251,7 @@ Function Start-NTAPPerformance(){
 
             If(!($NoExit) -or ($NoExit -eq $False)){
 
-              Throw "Command Completed"
+              Throw "Command Completed Prematurely"
 
             }    
 
@@ -838,7 +804,7 @@ Function Start-NTAPPerformance(){
         }
         if($NTAPCustomer)
         {
-            Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance using USE Model: [#---------]"
+            Write-Host -ForegroundColor green "Step 2 - Polling Cluster Performance per USE Model: [#---------]"
             $EnvironmentObj = Get-NTAPEnvironment -NTAPCustomer $NTAPCustomer
             $PerformanceArray = New-PeformanceObject -EnvironmentObj $EnvironmentObj
             if($PerformanceArray){

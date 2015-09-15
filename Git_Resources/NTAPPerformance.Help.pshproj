@@ -1,161 +1,18 @@
 <?xml version="1.0"?>
 <ModuleObject xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" fVersion="1.1" type="Manifest" mclass="External" useSupports="false">
   <Name>NTAPPerformance</Name>
-  <Version>0.0.3</Version>
+  <Version>0.0.5</Version>
   <Description>NetApp Performance Evaluation PowerShell Module</Description>
-  <ModulePath>\\vmware-host\Shared Folders\NTAPPerf\NTAPPerf\NTAPPerformance.psd1</ModulePath>
+  <ModulePath>Z:\NTAPPerf\NTAPPerf\NTAPPerformance.psd1</ModulePath>
   <HasManifest>false</HasManifest>
   <OverridePostCount>false</OverridePostCount>
   <FetchPostCount xsi:nil="true" />
   <Cmdlets>
-    <CmdletObject verb="Add" noun="NTAPLogEntry">
-      <Name>Add-NTAPLogEntry</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="" />
-      </ParamSets>
-      <Syntax>
-        <string>Add-NTAPLogEntry</string>
-      </Syntax>
-      <Parameters />
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Convert" noun="DateString">
-      <Name>Convert-DateString</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Date Format" />
-      </ParamSets>
-      <Syntax>
-        <string>Convert-DateString [[-Date] &lt;String&gt;] [[-Format] &lt;String&gt;]</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
-          <Name>Date</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="1" globbing="false">
-          <Name>Format</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Convert" noun="SystemCliTextInstance">
-      <Name>Convert-SystemCliTextInstance</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Data Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer" />
-      </ParamSets>
-      <Syntax>
-        <string>Convert-SystemCliTextInstance [-Data] &lt;String&gt;</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="false" isPos="true" pos="0" globbing="false">
-          <Name>Data</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.AllowNullAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="ConvertTo" noun="TypedValue">
-      <Name>ConvertTo-TypedValue</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Text" />
-      </ParamSets>
-      <Syntax>
-        <string>ConvertTo-TypedValue [[-Text] &lt;Object&gt;]</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription type="Object" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
-          <Name>Text</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
     <CmdletObject verb="Get" noun="DefinedNTAPEvents">
       <Name>Get-DefinedNTAPEvents</Name>
       <GeneralHelp>
-        <Synopsis />
-        <Description />
+        <Synopsis>Used to pull information about the Defined Errors</Synopsis>
+        <Description>This will display the defined errors and basic information about them.</Description>
         <Notes />
         <InputType />
         <InputUrl />
@@ -193,593 +50,31 @@
       <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
       <Publish>false</Publish>
     </CmdletObject>
-    <CmdletObject verb="Get" noun="NcAutosupportPerf">
-      <Name>Get-NcAutosupportPerf</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="Auto" Params="XML XSL DestinationPath Controllers Credential Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer" />
-      </ParamSets>
-      <Syntax>
-        <string>Get-NcAutosupportPerf -XML &lt;FileInfo&gt; [-XSL &lt;FileInfo&gt;] [-DestinationPath &lt;FileInfo&gt;] [-Controllers &lt;String[]&gt;] [-Credential &lt;PSCredential&gt;]</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription type="FileInfo" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
-          <Name>XML</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="FileInfo" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
-          <Name>XSL</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="FileInfo" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
-          <Name>DestinationPath</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="String[]" varLen="true" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
-          <Name>Controllers</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="PSCredential" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
-          <Name>Credential</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.AliasAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases>
-            <string>Cred</string>
-          </Aliases>
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Get" noun="NTAPCustomerInfo">
-      <Name>Get-NTAPCustomerInfo</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="NTAPCustomer" />
-      </ParamSets>
-      <Syntax>
-        <string>Get-NTAPCustomerInfo [[-NTAPCustomer] &lt;Object&gt;]</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription type="Object" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
-          <Name>NTAPCustomer</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Get" noun="NTAPEvent">
-      <Name>Get-NTAPEvent</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="" />
-      </ParamSets>
-      <Syntax>
-        <string>Get-NTAPEvent</string>
-      </Syntax>
-      <Parameters />
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Initialize" noun="NTAPLogs">
-      <Name>Initialize-NTAPLogs</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="Name" Params="logPath logName ModuleVersion Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer" />
-      </ParamSets>
-      <Syntax>
-        <string>Initialize-NTAPLogs [-logPath &lt;Object&gt;] [-logName &lt;Object&gt;] -ModuleVersion &lt;Object&gt;</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription type="Object" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
-          <Name>logPath</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="Object" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
-          <Name>logName</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="Object" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
-          <Name>ModuleVersion</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Log" noun="Error">
-      <Name>Log-Error</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="ErrorDesc Code category ExitGracefully Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer" />
-      </ParamSets>
-      <Syntax>
-        <string>Log-Error [-ErrorDesc] &lt;String&gt; [-Code] &lt;String&gt; [[-category] &lt;Object&gt;] [-ExitGracefully]</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
-          <Name>ErrorDesc</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="1" globbing="false">
-          <Name>Code</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="Object" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="2" globbing="false">
-          <Name>category</Name>
-          <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
-          <Name>ExitGracefully</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Log" noun="Finish">
-      <Name>Log-Finish</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="NoExit Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer" />
-      </ParamSets>
-      <Syntax>
-        <string>Log-Finish [[-NoExit] &lt;String&gt;]</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
-          <Name>NoExit</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Log" noun="Start">
-      <Name>Log-Start</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="LogPath LogName ModuleVersion Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer" />
-      </ParamSets>
-      <Syntax>
-        <string>Log-Start [-LogPath] &lt;String&gt; [-LogName] &lt;String&gt; [-ModuleVersion] &lt;String&gt;</string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
-          <Name>LogPath</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="1" globbing="false">
-          <Name>LogName</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="2" globbing="false">
-          <Name>ModuleVersion</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Log" noun="Write">
-      <Name>Log-Write</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="LineValue Code Severity Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer" />
-      </ParamSets>
-      <Syntax>
-        <string>Log-Write [-LineValue] &lt;String&gt; [-Code] &lt;Int32&gt; [-Severity] &lt;String&gt; {SUCCESS | INFORMATIONAL | WARNING} </string>
-      </Syntax>
-      <Parameters>
-        <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
-          <Name>LineValue</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="Int32" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="1" globbing="false">
-          <Name>Code</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-        <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="2" globbing="false">
-          <Name>Severity</Name>
-          <Attributes>
-            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
-            <string>System.Management.Automation.ValidateSetAttribute</string>
-            <string>System.Management.Automation.ParameterAttribute</string>
-          </Attributes>
-          <Aliases />
-          <Description />
-          <DefaultValue />
-        </ParameterDescription>
-      </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="New" noun="EnvironmentObject">
-      <Name>New-EnvironmentObject</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="" />
-      </ParamSets>
-      <Syntax>
-        <string>New-EnvironmentObject</string>
-      </Syntax>
-      <Parameters />
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="New" noun="NTAPCustomer">
-      <Name>New-NTAPCustomer</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="" />
-      </ParamSets>
-      <Syntax>
-        <string>New-NTAPCustomer</string>
-      </Syntax>
-      <Parameters />
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="New" noun="NTAPCustomerObject">
-      <Name>New-NTAPCustomerObject</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="" />
-      </ParamSets>
-      <Syntax>
-        <string>New-NTAPCustomerObject</string>
-      </Syntax>
-      <Parameters />
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="New" noun="NTAPEvent">
-      <Name>New-NTAPEvent</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="" />
-      </ParamSets>
-      <Syntax>
-        <string>New-NTAPEvent</string>
-      </Syntax>
-      <Parameters />
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="New" noun="PeformanceObject">
-      <Name>New-PeformanceObject</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="" />
-      </ParamSets>
-      <Syntax>
-        <string>New-PeformanceObject</string>
-      </Syntax>
-      <Parameters />
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Register" noun="NTAPEvents">
-      <Name>Register-NTAPEvents</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="" />
-      </ParamSets>
-      <Syntax>
-        <string>Register-NTAPEvents</string>
-      </Syntax>
-      <Parameters />
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Remove" noun="NTAPEvent">
-      <Name>Remove-NTAPEvent</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="" />
-      </ParamSets>
-      <Syntax>
-        <string>Remove-NTAPEvent</string>
-      </Syntax>
-      <Parameters />
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
     <CmdletObject verb="Start" noun="NTAPPerformance">
       <Name>Start-NTAPPerformance</Name>
       <GeneralHelp>
-        <Synopsis>Use this command to start the process for pulling performance statistics.</Synopsis>
-        <Description>This command will request information about the performance issue that is being seen and the system. Once the information is gathered it will reach out to the system and attempt to pull information to give to NetApp support.</Description>
-        <Notes />
+        <Synopsis>This command is used to start the pulling of performance statistics from a NetApp cDOT Cluster.</Synopsis>
+        <Description>The Start-NTAPPerformance cmdlet uses the Data ONTAP PowerShell toolkit to gather performance and configuration information about a NetApp Clustered Data OnTap system to be used for initial Performance Troubleshooting with support. It is meant to bridge the communicative gap between the customer and support without the need to physically send information about the system to support. You can read the results and choose what information to relay to support. 
+
+NO DATA IS TRANSMITTED TO SUPPORT. It is only recorded for your use.
+
+Specifically this cmdlet will prompt you for specific information about the performance issue occurring on your NetApp Cluster. It will ask you the protocol that is experiencing latency (this can be blank) and the details for connecting to the Cluster. If you have already connected to the cluster via PowerShell with the Data OnTap Module then it will allow you to use this connection. 
+
+Once the connection has been established to the cluster it will use the provided information about the cluster to query the cluster for environment details to include:
+ - Cluster names
+ - Node names
+ - Vserver names
+ - Protocol specific instances (CIFS, NFS, iSCSI, FCP)
+
+Once the cmdlet has completed the pull of information it output to an XML and a HTML page. The XML can be referenced in PowerShell as an input object and the HTML can be used to view the results.</Description>
+        <Notes>This module is provide with no support. For more details access the Github wiki pages.
+
+AUTHOR : Joseph Pulk
+REQUIRES
+        : PowerShell 2.0
+        : Data ONTAP PowerShell Toolkit 3.2.1
+        BURTS
+        : 20150719.1 - Collection of data to send to support errors stating missing functionality.</Notes>
         <InputType />
         <InputUrl />
         <InputTypeDescription />
@@ -788,10 +83,10 @@
         <ReturnTypeDescription />
       </GeneralHelp>
       <ParamSets>
-        <CommandParameterSetInfo2 Name="Name" Params="Name LogPath Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer" />
+        <CommandParameterSetInfo2 Name="Name" Params="Name OutputPath Iterations WaitTime LogPath CounterMetaPath TransformXSL Verbose Debug ErrorAction WarningAction ErrorVariable WarningVariable OutVariable OutBuffer" />
       </ParamSets>
       <Syntax>
-        <string>Start-NTAPPerformance [[-Name] &lt;String[]&gt;] [[-LogPath] &lt;DirectoryInfo&gt;]</string>
+        <string>Start-NTAPPerformance [[-Name] &lt;String[]&gt;] [[-OutputPath] &lt;DirectoryInfo&gt;] [[-Iterations] &lt;Int32&gt;] [[-WaitTime] &lt;Int32&gt;] [[-LogPath] &lt;DirectoryInfo&gt;] [-CounterMetaPath &lt;FileInfo&gt;] [[-TransformXSL] &lt;FileInfo&gt;]</string>
       </Syntax>
       <Parameters>
         <ParameterDescription type="String[]" varLen="true" required="false" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="true" isPos="true" pos="0" globbing="false">
@@ -807,10 +102,43 @@
             <string>SystemName</string>
             <string>ClusterName</string>
           </Aliases>
-          <Description>The Name of the Controller</Description>
+          <Description />
           <DefaultValue />
         </ParameterDescription>
         <ParameterDescription type="DirectoryInfo" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="1" globbing="false">
+          <Name>OutputPath</Name>
+          <Attributes>
+            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
+            <string>System.Management.Automation.ValidateNotNullOrEmptyAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>This is the Directory where the XML and HTML files will be written to.</Description>
+          <DefaultValue>[environment]::getfolderpath("MyDocuments")</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="Int32" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="2" globbing="false">
+          <Name>Iterations</Name>
+          <Attributes>
+            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
+            <string>System.Management.Automation.ValidateNotNullOrEmptyAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>The amount of repetitions the cmdlet will collect information from the NetApp Cluster.</Description>
+          <DefaultValue>4</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="Int32" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="3" globbing="false">
+          <Name>WaitTime</Name>
+          <Attributes>
+            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
+            <string>System.Management.Automation.ValidateNotNullOrEmptyAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>The amount of seconds the cmdlet will wait in between iterations.</Description>
+          <DefaultValue>10</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="DirectoryInfo" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="4" globbing="false">
           <Name>LogPath</Name>
           <Attributes>
             <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
@@ -818,36 +146,40 @@
             <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases />
-          <Description>The Path where you would like the log to go. This is specifically for errors with the command.</Description>
-          <DefaultValue />
+          <Description>The directory that the logs should be placed.</Description>
+          <DefaultValue>Current_Directory</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="FileInfo" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
+          <Name>CounterMetaPath</Name>
+          <Attributes>
+            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
+            <string>System.Management.Automation.ValidateNotNullOrEmptyAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>This is used to specify a non-standard counter definition file.</Description>
+          <DefaultValue>(Get-Module NTAPPerformance).ModuleBase + "\Resources\CounterMeta.csv"</DefaultValue>
+        </ParameterDescription>
+        <ParameterDescription type="FileInfo" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="1" globbing="false">
+          <Name>TransformXSL</Name>
+          <Attributes>
+            <string>System.Management.Automation.ArgumentTypeConverterAttribute</string>
+            <string>System.Management.Automation.ValidateNotNullOrEmptyAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>This parameter is used to specify a non-standard XSL Transformation.</Description>
+          <DefaultValue>(Get-Module NTAPPerformance).ModuleBase + "\Resources\NTAPPerf_Transform.xsl"</DefaultValue>
         </ParameterDescription>
       </Parameters>
-      <Examples />
-      <RelatedLinks />
-      <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
-      <Publish>false</Publish>
-    </CmdletObject>
-    <CmdletObject verb="Stop" noun="NTAPPerformance">
-      <Name>Stop-NTAPPerformance</Name>
-      <GeneralHelp>
-        <Synopsis />
-        <Description />
-        <Notes />
-        <InputType />
-        <InputUrl />
-        <InputTypeDescription />
-        <ReturnType />
-        <ReturnUrl />
-        <ReturnTypeDescription />
-      </GeneralHelp>
-      <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="" />
-      </ParamSets>
-      <Syntax>
-        <string>Stop-NTAPPerformance</string>
-      </Syntax>
-      <Parameters />
-      <Examples />
+      <Examples>
+        <Example>
+          <Name>Example 1</Name>
+          <Cmd>PS C:\&gt; Start-NTAPPerformance</Cmd>
+          <Description>This will begin the cmdlet and prompt you for specific information about the latent technology.</Description>
+          <Output />
+        </Example>
+      </Examples>
       <RelatedLinks />
       <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
       <Publish>false</Publish>
